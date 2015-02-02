@@ -1,0 +1,30 @@
+{
+  "name": "christophervachon-node",
+  "version": "0.0.0",
+  "description": "A Node Powered Website For Myself",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/liaodrake/christophervachon-node.git"
+  },
+  "author": "Christopher Vachon",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/liaodrake/christophervachon-node/issues"
+  },
+  "scripts": {
+    "test": "mocha tests/test.js",
+    "start": "node bin/www"
+  },
+  "homepage": "https://github.com/liaodrake/christophervachon-node",
+  "dependencies": {
+    "body-parser": "^1.10.1",
+    "express": "^4.11.0",
+    "jade": "^1.9.1",
+    "request": "^2.51.0",
+    "simply-deferred": "^3.0.0"
+  },
+  "devDependencies": {
+    "mocha": "^2.1.0",
+    "supertest": "^0.15.0"
+  }
+}
