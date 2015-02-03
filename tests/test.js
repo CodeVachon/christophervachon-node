@@ -18,3 +18,5 @@ describe('Requests to the root path', function() {
     });
 
 });
+
+describe("Blog Tests", function() { require('./blog'); });
