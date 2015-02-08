@@ -11,6 +11,9 @@ describe('Post Request to Blog Path', function() {
             .expect(/Test Article/i)
             .expect(201)
             .expect('Content-Type', /json/i)
+            .expect(function(res) {
+                if (res.body.title != "Test Article") { throw new Error("Incorrect Title Returned"); }
+            })
             .end(done);
     });
 
@@ -21,6 +24,10 @@ describe('Post Request to Blog Path', function() {
                 .send('summary=Test+Summary&body=Test+Body')
                 .expect(400)
                 .expect('Content-Type', /json/i)
+                .expect(function(res) {
+                    if (!res.body.validationerrors) { throw new Error("Expected a Validation Errors"); }
+                    if (!res.body.validationerrors.title) { throw new Error("Expected a Validation Error for Title"); }
+                })
                 .end(done);
         });
 
@@ -30,6 +37,10 @@ describe('Post Request to Blog Path', function() {
                 .send('title=Test+Article&body=Test+Body')
                 .expect(400)
                 .expect('Content-Type', /json/i)
+                .expect(function(res) {
+                    if (!res.body.validationerrors) { throw new Error("Expected a Validation Errors"); }
+                    if (!res.body.validationerrors.summary) { throw new Error("Expected a Validation Error for Summary"); }
+                })
                 .end(done);
         });
 
@@ -39,6 +50,10 @@ describe('Post Request to Blog Path', function() {
                 .send('title=Test+Article&summary=Test+Summary')
                 .expect(400)
                 .expect('Content-Type', /json/i)
+                .expect(function(res) {
+                    if (!res.body.validationerrors) { throw new Error("Expected a Validation Errors"); }
+                    if (!res.body.validationerrors.body) { throw new Error("Expected a Validation Error for Body"); }
+                })
                 .end(done);
         });
     });
@@ -61,6 +76,15 @@ describe('Get Request to Blog', function() {
                 .expect('Content-Type', /json/i)
                 .end(done);
         });
+
+        it('Returns JSON Array', function(done) {
+            request(app)
+                .get(path)
+                .expect(function(res) {
+                    if (typeof(res.body) == "Array") { throw new Error("Expected an Array"); }
+                })
+                .end(done);
+        });
     });
 
     describe('view path', function() {
@@ -76,6 +100,15 @@ describe('Get Request to Blog', function() {
             request(app)
                 .get(path)
                 .expect('Content-Type', /json/i)
+                .end(done);
+        });
+
+        it('Returns JSON Object', function(done) {
+            request(app)
+                .get(path)
+                .expect(function(res) {
+                    if (typeof(res.body) == "Object") { throw new Error("Expected an Object"); }
+                })
                 .end(done);
         });
 
