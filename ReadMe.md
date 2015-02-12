@@ -1,5 +1,5 @@
-Christopher Vachon's Node Powered Website
-=========================================
+Christopher Vachon's Node Powered API
+=====================================
 
 ## Scripts
 ### Startup
@@ -22,3 +22,5 @@ npm test
 | Jade | This is a template engine used for simple html mark up | [http://jade-lang.com/] |
 | SuperTest | This is a front end testing framework | [https://github.com/tj/supertest] |
 | Mocha | This is a testing framework for Node | [http://mochajs.org/] |
+| Mongoose | This is a CRUD framework for MongoDB | [http://mongoosejs.com/] |
+| body-parser | This is middleware to put incoming variables into request |  [https://github.com/expressjs/body-parser] |
