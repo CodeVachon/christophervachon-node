@@ -1,18 +1,35 @@
+process.env['testing'] = true;
+
 var request = require('supertest'),
-    app = require('./../app')
+    app = require('./../app'),
+    createdBlogData = false,
+    articleID = "54dbfc670629ed3b226b8b41",
+    Article = require('../models/article')
 ;
 
 describe('Post Request to Blog Path', function() {
+    before(function(done) {
+        // We are going to add in article with a specfic id,
+        // lets ensure its not there first.
+        Article.findByIdAndRemove(articleID, function(err) {
+            if (err) {
+                console.log(err);
+            }
+            done();
+        });
+    });
+
     var path = '/blog';
     it('Returns a 201 status code', function(done) {
         request(app)
             .post(path)
-            .send('title=Test+Article&summary=Test+Summary&body=Test+Body')
+            .send('_id='+articleID+'&title=Test+Article&summary=Test+Summary&body=Test+Body')
             .expect(/Test Article/i)
             .expect(201)
             .expect('Content-Type', /json/i)
             .expect(function(res) {
                 if (res.body.title != "Test Article") { throw new Error("Incorrect Title Returned"); }
+                createdBlogData = res.body;
             })
             .end(done);
     });
@@ -82,14 +99,15 @@ describe('Get Request to Blog', function() {
                 .get(path)
                 .expect(function(res) {
                     if (typeof(res.body) == "Array") { throw new Error("Expected an Array"); }
+                    createdBlogData = res.body[0];
                 })
                 .end(done);
         });
     });
 
     describe('view path', function() {
-        var path = '/blog/0';
-        it('Returns a 200 status code', function(done) {
+        var path = '/blog/'+articleID;
+        it('Returns a 200 status code ['+path+']', function(done) {
             request(app)
                 .get(path)
                 .expect(200)
@@ -116,6 +134,13 @@ describe('Get Request to Blog', function() {
             request(app)
                 .get(path)
                 .expect(/Test Article/gi)
+                .end(done);
+        });
+
+        it('Returns 404 when invalid ID is passed', function(done) {
+            request(app)
+                .get(path.replace(/4/g,'6'))
+                .expect(404)
                 .end(done);
         });
     });

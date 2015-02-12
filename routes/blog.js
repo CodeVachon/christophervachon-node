@@ -2,12 +2,20 @@ var express = require('express'),
     router = express.Router(),
     articles = [],
     bodyParser = require('body-parser'),
-    urlencode = bodyParser.urlencoded({ extended: false })
+    urlencode = bodyParser.urlencoded({ extended: false }),
+    mongoose = require('mongoose'),
+    Article = require('../models/article')
 ;
 
 router.route('/')
     .get(function(request, response) {
-        response.status(200).json(articles);
+        Article.find(function (errors, articles) {
+          if (errors) {
+              response.status(500).json(errors);
+              return;
+          }
+          response.status(200).json(articles);
+        });
     }) // close get
     .post(urlencode, function(request, response) {
         var newArticle = request.body;
@@ -22,30 +30,36 @@ router.route('/')
             return;
         }
 
-        if ( !newArticle.postDateTime ) {
-            newArticle.postDateTime = new Date();
+        if ( !newArticle.publish_date ) {
+            newArticle.publish_date = new Date();
         }
         if ( !newArticle.isDraft ) {
             newArticle.isDraft = true;
         }
 
-        articles.push(newArticle);
-        response.status(201).json(newArticle);
+        Article.create(newArticle, function (error, post) {
+          if (error) {
+              response.status(500).json(error);
+              return;
+          }
+          response.status(201).json(post);
+        });
     }) // close post
 ; // close route('/')
 
-router.route('/:index')
+router.route('/:id')
     .get(function(request, response) {
-        if (
-            typeof(request.params.index) === "number" &&
-            request.params.index > 0 &&
-            articles.length < request.params.index &&
-            articles[request.params.index]
-        ) {
-            response.status(200).json(articles);
-        } else {
-            response.status(200).json(articles);
-        }
+        Article.findById(request.params.id, function (error, post) {
+          if (error) {
+              response.status(500).json(error);
+              return;
+          }
+          if (post == null) {
+              response.status(404).json("Not found");
+              return;
+          }
+          response.status(200).json(post);
+        });
     }) // close get
 ; // close route('/:index')
 

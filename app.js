@@ -1,10 +1,21 @@
 
 var express = require('express'),
     app = express(),
-    bodyParser = require('body-parser'),
-    urlencode = bodyParser.urlencoded({ extended: false })
+    mongoose = require('mongoose'),
+    dbName = "cmvBlog-" + (process.env.testing?"Testing":"Production")
 ;
+mongoose.connect('mongodb://localhost/'+dbName, function(error) {
+    if(error) {
+        console.log('mongodb connection error', error);
+    } else if (!process.env.testing) {
+        console.log('mongodb connection ['+dbName+'] successful');
+    }
+});
 
+
+if (process.env.testing) {
+    console.log("TESTING ENVIROMENT!!!");
+}
 
 app.set('view engine', 'jade');
 app.use(express.static(__dirname + '/public'));
