@@ -3,15 +3,15 @@ process.env['testing'] = true;
 var request = require('supertest'),
     app = require('./../app'),
     createdBlogData = false,
-    articleID = "54dbfc670629ed3b226b8b41",
-    Article = require('../models/article')
+    projectID = "34dbfc670629ed3b226b8b41",
+    Project = require('../models/project')
 ;
 
-describe('Post Request to Blog Path', function() {
+describe('POST Requests to Projects path', function() {
     before(function(done) {
         // We are going to add in article with a specfic id,
         // lets ensure its not there first.
-        Article.findByIdAndRemove(articleID, function(err) {
+        Project.findByIdAndRemove(projectID, function(err) {
             if (err) {
                 console.log(err);
             }
@@ -19,17 +19,16 @@ describe('Post Request to Blog Path', function() {
         });
     });
 
-    var path = '/blog';
+    var path = '/projects';
     it('Returns a 201 status code', function(done) {
         request(app)
             .post(path)
-            .send('_id='+articleID+'&title=Test+Article&summary=Test+Summary&body=Test+Body')
-            .expect(/Test Article/i)
+            .send('_id='+projectID+'&title=Test+Project&summary=Test+Summary')
             .expect(201)
             .expect('Content-Type', /json/i)
             .expect(function(res) {
-                if (res.body.title != "Test Article") { throw new Error("Incorrect Title Returned"); }
-                createdBlogData = res.body;
+                if (res.body.title != "Test Project") { throw new Error("Incorrect Title Returned"); }
+                if (res.body.summary != "Test Summary") { throw new Error("Incorrect Summary Returned"); }
             })
             .end(done);
     });
@@ -38,7 +37,7 @@ describe('Post Request to Blog Path', function() {
         it('posting without a Title', function(done) {
             request(app)
                 .post(path)
-                .send('summary=Test+Summary&body=Test+Body')
+                .send('summary=Test+Summary')
                 .expect(400)
                 .expect('Content-Type', /json/i)
                 .expect(function(res) {
@@ -51,7 +50,7 @@ describe('Post Request to Blog Path', function() {
         it('posting without a Summary', function(done) {
             request(app)
                 .post(path)
-                .send('title=Test+Article&body=Test+Body')
+                .send('title=Test+Project')
                 .expect(400)
                 .expect('Content-Type', /json/i)
                 .expect(function(res) {
@@ -61,25 +60,13 @@ describe('Post Request to Blog Path', function() {
                 .end(done);
         });
 
-        it('posting without a Body', function(done) {
-            request(app)
-                .post(path)
-                .send('title=Test+Article&summary=Test+Summary')
-                .expect(400)
-                .expect('Content-Type', /json/i)
-                .expect(function(res) {
-                    if (!res.body.validationerrors) { throw new Error("Expected a Validation Errors"); }
-                    if (!res.body.validationerrors.body) { throw new Error("Expected a Validation Error for Body"); }
-                })
-                .end(done);
-        });
     });
 
 });
 
-describe('Get Request to Blog', function() {
+describe('GET Requests to Projects path', function() {
     describe('list path', function() {
-        var path = '/blog';
+        var path = '/projects';
         it('Returns a 200 status code', function(done) {
             request(app)
                 .get(path)
@@ -106,7 +93,7 @@ describe('Get Request to Blog', function() {
     });
 
     describe('view path', function() {
-        var path = '/blog/'+articleID;
+        var path = '/projects/'+projectID;
         it('Returns a 200 status code ['+path+']', function(done) {
             request(app)
                 .get(path)
@@ -130,10 +117,10 @@ describe('Get Request to Blog', function() {
                 .end(done);
         });
 
-        it('Returns Test Article', function(done) {
+        it('Returns Test Project', function(done) {
             request(app)
                 .get(path)
-                .expect(/Test Article/gi)
+                .expect(/Test Project/gi)
                 .end(done);
         });
 
@@ -143,5 +130,39 @@ describe('Get Request to Blog', function() {
                 .expect(404)
                 .end(done);
         });
+
+    });
+});
+
+describe('PUT Requests to Projects', function() {
+    var path = '/projects/'+projectID;
+    it('Returns a 202 status code', function(done) {
+        request(app)
+            .put(path)
+            .send('title=Test+Project+Renamed')
+            .expect(/Test Project Renamed/i)
+            .expect(202)
+            .expect('Content-Type', /json/i)
+            .expect(function(res) {
+                if (res.body.title != "Test Project Renamed") { throw new Error("Incorrect Title Returned"); }
+            })
+            .end(done);
+    });
+});
+
+describe('DELETE Requests to Projects', function() {
+    var path = '/projects/'+projectID;
+    it('Returns a 204 status code', function(done) {
+        request(app)
+            .delete(path)
+            .expect(204)
+            .end(done);
+    });
+    it('Project can no longer be found', function(done) {
+        request(app)
+            .get(path)
+            .expect(404)
+            .expect('Content-Type', /json/i)
+            .end(done);
     });
 });

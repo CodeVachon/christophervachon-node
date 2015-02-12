@@ -1,9 +1,7 @@
 var express = require('express'),
     router = express.Router(),
-    articles = [],
     bodyParser = require('body-parser'),
     urlencode = bodyParser.urlencoded({ extended: false }),
-    mongoose = require('mongoose'),
     Article = require('../models/article')
 ;
 
@@ -61,6 +59,24 @@ router.route('/:id')
           response.status(200).json(post);
         });
     }) // close get
+    .put(urlencode, function(request, response) {
+        Article.findByIdAndUpdate(request.params.id, request.body, function (error, post) {
+          if (error) {
+              response.status(400).json(error);
+              return;
+          }
+          response.status(202).json(post);
+        });
+    }) // close put
+    .delete(function(request, response) {
+        Article.findByIdAndRemove(request.params.id, function (error, post) {
+            if (error) {
+                response.status(400).json(error);
+                return;
+            }
+            response.status(204).json("");
+        });
+    }) // close delete
 ; // close route('/:index')
 
 module.exports = router;

@@ -26,8 +26,11 @@ app.get('/', function (request, response) {
 }); // close get('/')
 
 
-var _blogRouter = require('./routes/blog');
-app.use('/blog', _blogRouter);
+var _postsRouter = require('./routes/posts');
+app.use('/posts', _postsRouter);
 
+
+var _projectRouter = require('./routes/projects');
+app.use('/projects', _projectRouter);
 
 module.exports = app;

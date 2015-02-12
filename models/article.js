@@ -1,7 +1,4 @@
-var mongoose = require('mongoose'),
-    dbName = "cmvBlog-" + (process.env.testing?"Testing":"Production")
-;
-if (process.env.testing) { console.log("DatabaseName:" + dbName); }
+var mongoose = require('mongoose');
 
 var ArticleSchema = new mongoose.Schema({
     title: String,
