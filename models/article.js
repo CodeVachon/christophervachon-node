@@ -16,4 +16,12 @@ var ArticleSchema = new mongoose.Schema({
     created_at: { type: Date, default: Date.now }
 });
 
+
+ArticleSchema.pre('save', function(callback) {
+    var article = this;
+    article.updated_at = new Date();
+    return callback();
+});
+
+
 module.exports = mongoose.model('Article', ArticleSchema);

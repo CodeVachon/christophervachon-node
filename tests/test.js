@@ -1,7 +1,11 @@
 process.env['testing'] = true;
 
-var request = require('supertest');
-var app = require('./../app');
+var request = require('supertest'),
+    app = require('./../app'),
+    User = require('./../models/user'),
+    fs = require('fs'),
+    _authorizedUser = JSON.parse(fs.readFileSync(__dirname + '/_authorizedUser.json', 'utf8'))
+;
 
 describe('Requests to the root path', function() {
 
@@ -19,7 +23,23 @@ describe('Requests to the root path', function() {
             .end(done);
     });
 
+    after(function(done) {
+        // We are going to add in article with a specfic id,
+        // lets ensure its not there first.
+        User.findByIdAndRemove(_authorizedUser._id, function(error) {
+            if (error) {
+                console.log(error);
+            }
+            User.create(_authorizedUser, function (error, post) {
+              if (error) {
+                  console.log(error);
+              }
+              done();
+            });
+        });
+    });
 });
 
 describe("Blog Post Tests", function() { require('./posts'); });
 describe("Projects Tests", function() { require('./projects'); });
+describe("Users Tests", function() { require('./users'); });

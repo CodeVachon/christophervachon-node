@@ -11,4 +11,12 @@ var ProjectSchema = new mongoose.Schema({
     created_at: { type: Date, default: Date.now }
 });
 
+
+ProjectSchema.pre('save', function(callback) {
+    var project = this;
+    project.updated_at = new Date();
+    return callback();
+});
+
+
 module.exports = mongoose.model('Project', ProjectSchema);

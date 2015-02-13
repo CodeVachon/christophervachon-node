@@ -17,10 +17,13 @@
   },
   "homepage": "https://github.com/liaodrake/christophervachon-node",
   "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
     "body-parser": "^1.10.1",
     "express": "^4.11.0",
     "jade": "^1.9.1",
     "mongoose": "^3.8.23",
+    "passport": "^0.2.1",
+    "passport-http": "^0.2.2",
     "request": "^2.51.0",
     "simply-deferred": "^3.0.0"
   },

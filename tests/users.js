@@ -3,17 +3,17 @@ process.env['testing'] = true;
 var request = require('supertest'),
     app = require('./../app'),
     createdBlogData = false,
-    articleID = "54dbfc670629ed3b226b8b41",
-    Article = require('../models/article'),
+    userId = "21dbfc670629ed3b226b8b41",
+    User = require('../models/user'),
     fs = require('fs'),
     _authorizedUser = JSON.parse(fs.readFileSync(__dirname + '/_authorizedUser.json', 'utf8'))
 ;
 
-describe('POST Request to Posts Path', function() {
+describe('POST Requests to Users path', function() {
     before(function(done) {
         // We are going to add in article with a specfic id,
         // lets ensure its not there first.
-        Article.findByIdAndRemove(articleID, function(err) {
+        User.findByIdAndRemove(userId, function(err) {
             if (err) {
                 console.log(err);
             }
@@ -21,72 +21,86 @@ describe('POST Request to Posts Path', function() {
         });
     });
 
-    var path = '/posts';
+    var path = '/users';
     it('Returns a 201 status code', function(done) {
         request(app)
             .post(path)
             .auth(_authorizedUser.emailAddress, _authorizedUser.password)
-            .send('_id='+articleID+'&title=Test+Article&summary=Test+Summary&body=Test+Body')
-            .expect(/Test Article/i)
+            .send('_id='+userId+'&firstName=Admin&lastName=Strator&emailAddress=admin@local.host&password=test')
             .expect(201)
             .expect('Content-Type', /json/i)
             .expect(function(res) {
-                if (res.body.title != "Test Article") { throw new Error("Incorrect Title Returned"); }
-                if (res.body.summary != "Test Summary") { throw new Error("Incorrect Summary Returned"); }
-                if (res.body.body != "Test Body") { throw new Error("Incorrect Body Returned"); }
+                if (res.body.firstName != "Admin") { throw new Error("Incorrect firstName Returned"); }
+                if (res.body.lastName != "Strator") { throw new Error("Incorrect lastName Returned"); }
+                if (res.body.emailAddress != "admin@local.host") { throw new Error("Incorrect emailAddress Returned"); }
             })
             .end(done);
     });
 
     describe('Returns a 400 when', function() {
-        it('posting without a Title', function(done) {
+        it('posting without a firstName', function(done) {
             request(app)
                 .post(path)
                 .auth(_authorizedUser.emailAddress, _authorizedUser.password)
-                .send('summary=Test+Summary&body=Test+Body')
+                .send('lastName=Strator&emailAddress=admin@local.host&password=test')
                 .expect(400)
                 .expect('Content-Type', /json/i)
                 .expect(function(res) {
                     if (!res.body.validationerrors) { throw new Error("Expected a Validation Errors"); }
-                    if (!res.body.validationerrors.title) { throw new Error("Expected a Validation Error for Title"); }
+                    if (!res.body.validationerrors.firstName) { throw new Error("Expected a Validation Error for firstName"); }
                 })
                 .end(done);
         });
 
-        it('posting without a Summary', function(done) {
+        it('posting without a lastName', function(done) {
             request(app)
                 .post(path)
                 .auth(_authorizedUser.emailAddress, _authorizedUser.password)
-                .send('title=Test+Article&body=Test+Body')
+                .send('firstName=Strator&emailAddress=admin@local.host&password=test')
                 .expect(400)
                 .expect('Content-Type', /json/i)
                 .expect(function(res) {
                     if (!res.body.validationerrors) { throw new Error("Expected a Validation Errors"); }
-                    if (!res.body.validationerrors.summary) { throw new Error("Expected a Validation Error for Summary"); }
+                    if (!res.body.validationerrors.lastName) { throw new Error("Expected a Validation Error for lastName"); }
                 })
                 .end(done);
         });
 
-        it('posting without a Body', function(done) {
+        it('posting without a emailAddress', function(done) {
             request(app)
                 .post(path)
                 .auth(_authorizedUser.emailAddress, _authorizedUser.password)
-                .send('title=Test+Article&summary=Test+Summary')
+                .send('firstName=Admin&lastName=Strator&password=test')
                 .expect(400)
                 .expect('Content-Type', /json/i)
                 .expect(function(res) {
                     if (!res.body.validationerrors) { throw new Error("Expected a Validation Errors"); }
-                    if (!res.body.validationerrors.body) { throw new Error("Expected a Validation Error for Body"); }
+                    if (!res.body.validationerrors.emailAddress) { throw new Error("Expected a Validation Error for emailAddress"); }
                 })
                 .end(done);
         });
+
+        it('posting without a password', function(done) {
+            request(app)
+                .post(path)
+                .auth(_authorizedUser.emailAddress, _authorizedUser.password)
+                .send('firstName=Admin&lastName=Strator&emailAddress=admin@local.host')
+                .expect(400)
+                .expect('Content-Type', /json/i)
+                .expect(function(res) {
+                    if (!res.body.validationerrors) { throw new Error("Expected a Validation Errors"); }
+                    if (!res.body.validationerrors.password) { throw new Error("Expected a Validation Error for password"); }
+                })
+                .end(done);
+        });
+
     });
 
 });
 
-describe('GET Requests to Posts', function() {
+describe('GET Requests to Users path', function() {
     describe('list path', function() {
-        var path = '/posts';
+        var path = '/users';
         it('Returns a 200 status code', function(done) {
             request(app)
                 .get(path)
@@ -115,7 +129,7 @@ describe('GET Requests to Posts', function() {
     });
 
     describe('view path', function() {
-        var path = '/posts/'+articleID;
+        var path = '/users/'+userId;
         it('Returns a 200 status code ['+path+']', function(done) {
             request(app)
                 .get(path)
@@ -142,11 +156,11 @@ describe('GET Requests to Posts', function() {
                 .end(done);
         });
 
-        it('Returns Test Article', function(done) {
+        it('Returns Admin', function(done) {
             request(app)
                 .get(path)
                 .auth(_authorizedUser.emailAddress, _authorizedUser.password)
-                .expect(/Test Article/gi)
+                .expect(/Admin/gi)
                 .end(done);
         });
 
@@ -157,28 +171,29 @@ describe('GET Requests to Posts', function() {
                 .expect(404)
                 .end(done);
         });
+
     });
 });
 
-describe('PUT Requests to Posts', function() {
-    var path = '/posts/'+articleID;
+describe('PUT Requests to Users', function() {
+    var path = '/users/'+userId;
     it('Returns a 202 status code', function(done) {
         request(app)
             .put(path)
             .auth(_authorizedUser.emailAddress, _authorizedUser.password)
-            .send('title=Test+Article+Renamed')
-            .expect(/Test Article Renamed/i)
+            .send('lastName=Strator+Renamed')
+            .expect(/Strator\sRenamed/i)
             .expect(202)
             .expect('Content-Type', /json/i)
             .expect(function(res) {
-                if (res.body.title != "Test Article Renamed") { throw new Error("Incorrect Title Returned"); }
+                if (res.body.lastName != "Strator Renamed") { throw new Error("Incorrect LastName Returned"); }
             })
             .end(done);
     });
 });
 
-describe('DELETE Requests to Posts', function() {
-    var path = '/posts/'+articleID;
+describe('DELETE Requests to Users', function() {
+    var path = '/users/'+userId;
     it('Returns a 204 status code', function(done) {
         request(app)
             .delete(path)
@@ -186,7 +201,7 @@ describe('DELETE Requests to Posts', function() {
             .expect(204)
             .end(done);
     });
-    it('Post can no longer be found', function(done) {
+    it('User can no longer be found', function(done) {
         request(app)
             .get(path)
             .auth(_authorizedUser.emailAddress, _authorizedUser.password)
