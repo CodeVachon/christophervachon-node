@@ -21,7 +21,7 @@ describe('POST Requests to Projects path', function() {
         });
     });
 
-    var path = '/projects';
+    var path = '/api/projects';
     it('Returns a 201 status code', function(done) {
         request(app)
             .post(path)
@@ -71,7 +71,7 @@ describe('POST Requests to Projects path', function() {
 
 describe('GET Requests to Projects path', function() {
     describe('list path', function() {
-        var path = '/projects';
+        var path = '/api/projects';
         it('Returns a 200 status code', function(done) {
             request(app)
                 .get(path)
@@ -101,7 +101,7 @@ describe('GET Requests to Projects path', function() {
     });
 
     describe('view path', function() {
-        var path = '/projects/'+projectID;
+        var path = '/api/projects/'+projectID;
         it('Returns a 200 status code ['+path+']', function(done) {
             request(app)
                 .get(path)
@@ -148,7 +148,7 @@ describe('GET Requests to Projects path', function() {
 });
 
 describe('PUT Requests to Projects', function() {
-    var path = '/projects/'+projectID;
+    var path = '/api/projects/'+projectID;
     it('Returns a 202 status code', function(done) {
         request(app)
             .put(path)
@@ -165,7 +165,7 @@ describe('PUT Requests to Projects', function() {
 });
 
 describe('DELETE Requests to Projects', function() {
-    var path = '/projects/'+projectID;
+    var path = '/api/projects/'+projectID;
     it('Returns a 204 status code', function(done) {
         request(app)
             .delete(path)

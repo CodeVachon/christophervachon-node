@@ -21,7 +21,7 @@ describe('POST Request to Posts Path', function() {
         });
     });
 
-    var path = '/posts';
+    var path = '/api/posts';
     it('Returns a 201 status code', function(done) {
         request(app)
             .post(path)
@@ -34,6 +34,7 @@ describe('POST Request to Posts Path', function() {
                 if (res.body.title != "Test Article") { throw new Error("Incorrect Title Returned"); }
                 if (res.body.summary != "Test Summary") { throw new Error("Incorrect Summary Returned"); }
                 if (res.body.body != "Test Body") { throw new Error("Incorrect Body Returned"); }
+                if (res.body.safeurl != "test-article") { throw new Error("Incorrect SafeURL Returned"); }
             })
             .end(done);
     });
@@ -86,7 +87,7 @@ describe('POST Request to Posts Path', function() {
 
 describe('GET Requests to Posts', function() {
     describe('list path', function() {
-        var path = '/posts';
+        var path = '/api/posts';
         it('Returns a 200 status code', function(done) {
             request(app)
                 .get(path)
@@ -115,7 +116,7 @@ describe('GET Requests to Posts', function() {
     });
 
     describe('view path', function() {
-        var path = '/posts/'+articleID;
+        var path = '/api/posts/'+articleID;
         it('Returns a 200 status code ['+path+']', function(done) {
             request(app)
                 .get(path)
@@ -161,7 +162,7 @@ describe('GET Requests to Posts', function() {
 });
 
 describe('PUT Requests to Posts', function() {
-    var path = '/posts/'+articleID;
+    var path = '/api/posts/'+articleID;
     it('Returns a 202 status code', function(done) {
         request(app)
             .put(path)
@@ -172,13 +173,16 @@ describe('PUT Requests to Posts', function() {
             .expect('Content-Type', /json/i)
             .expect(function(res) {
                 if (res.body.title != "Test Article Renamed") { throw new Error("Incorrect Title Returned"); }
+                if (res.body.safeurl != "test-article-renamed") { throw new Error("Incorrect SafeURL Returned -- expected [test-article-renamed] got ["+res.body.safeurl+"]"); }
+                if (typeof(res.body.safeurl_history) === "Array") { throw new Error("Expected SafeURL_History to be an Array"); }
+                if (res.body.safeurl_history[0] != "test-article") { throw new Error("Incorrect SafeURL_History[0] Returned -- expected [test-article] got ["+res.body.safeurl_history[0]+"]"); }
             })
             .end(done);
     });
 });
 
 describe('DELETE Requests to Posts', function() {
-    var path = '/posts/'+articleID;
+    var path = '/api/posts/'+articleID;
     it('Returns a 204 status code', function(done) {
         request(app)
             .delete(path)

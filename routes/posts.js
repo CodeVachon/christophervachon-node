@@ -60,6 +60,29 @@ router.route('/:id')
         });
     }) // close get
     .put(urlencode, function(request, response) {
+        Article.findById(request.params.id, function (error, article) {
+            if (error) {
+                response.status(400).json(error);
+                return;
+            }
+
+            var requestBodyKeys = Object.keys(request.body),
+                _key = ""
+            ;
+            for (var i=0,x=requestBodyKeys.length; i<x; i++) {
+                _key = requestBodyKeys[i];
+                article[_key] = request.body[_key];
+            }
+
+            article.save(function(error) {
+                if (error) {
+                    response.status(400).json(error);
+                    return;
+                }
+                response.status(202).json(article);
+            });
+        });
+        /*
         Article.findByIdAndUpdate(request.params.id, request.body, function (error, post) {
           if (error) {
               response.status(400).json(error);
@@ -67,6 +90,7 @@ router.route('/:id')
           }
           response.status(202).json(post);
         });
+        */
     }) // close put
     .delete(function(request, response) {
         Article.findByIdAndRemove(request.params.id, function (error, post) {
