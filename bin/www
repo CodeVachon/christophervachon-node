@@ -2,6 +2,48 @@
 
 var app = require('./../app');
 var port = process.env.PORT || 3030;
+
+var User = require('./../models/user');
+var AdminUser = {
+    _id: '0a0a0a0a0a0a0a0a0a0a0a0a',
+    firstName: 'Admin',
+    lastName: 'Strator',
+    emailAddress: 'admin@local.host',
+    password: '',
+    isAdmin: true
+};
+
+
 app.listen(port, function(){
   console.log('Listening on port ' + port);
+
+  User.findByIdAndRemove(AdminUser._id, function(error) {
+    if (error) {
+        console.log(error);
+    }
+    AdminUser.password = generatePassword();
+    User.create(AdminUser, function (error, post) {
+        if (error) {
+            response.status(500).json(error);
+            return;
+        }
+        console.log("Administrator:", AdminUser);
+    });
+
+  });
 });
+
+function generatePassword(minLength, maxLength) {
+    var text = "";
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    var textLength = getRandomInt(minLength || 12, maxLength || 25);
+
+    for( var i=0; i < textLength; i++ ) {
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+    return text;
+}
+
+function getRandomInt(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
