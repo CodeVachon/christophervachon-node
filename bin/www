@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 var app = require('./../app');
+var fs = require('fs');
 var port = process.env.PORT || 3030;
 
 var User = require('./../models/user');
@@ -22,12 +23,17 @@ app.listen(port, function(){
         console.log(error);
     }
     AdminUser.password = generatePassword();
-    User.create(AdminUser, function (error, post) {
+    User.create(AdminUser, function (error, admin) {
         if (error) {
-            response.status(500).json(error);
+            console.log(error);
             return;
         }
         console.log("Administrator:", AdminUser);
+        fs.writeFile('./_admin.json', JSON.stringify( AdminUser, null, '\t' ), function(error) {
+            if (error) {
+                console.log(error);
+            }
+        });
     });
 
   });
@@ -35,8 +41,8 @@ app.listen(port, function(){
 
 function generatePassword(minLength, maxLength) {
     var text = "";
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    var textLength = getRandomInt(minLength || 12, maxLength || 25);
+    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@%$";
+    var textLength = getRandomInt(minLength || 20, maxLength || 25);
 
     for( var i=0; i < textLength; i++ ) {
         text += possible.charAt(Math.floor(Math.random() * possible.length));
