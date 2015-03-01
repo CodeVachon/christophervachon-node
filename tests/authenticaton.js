@@ -10,53 +10,68 @@ var request = require('supertest'),
     _authorizedUserToken = ""
 ;
 
-describe('Requests to the root path', function() {
+describe('Requests to the Authentication path', function() {
+    describe('Should Return Error', function() {
+        it('404 status code with GET', function(done) {
+            request(app)
+                .get('/api/authenticate')
+                .expect(404)
+                .end(done);
+        });
 
-    it('Returns a 404 status code with GET', function(done) {
-        request(app)
-            .get('/api/authenticate')
-            .expect(404)
-            .end(done);
-    });
+        it('404 status code with PUT', function(done) {
+            request(app)
+                .put('/api/authenticate')
+                .expect(404)
+                .end(done);
+        });
 
-    it('Returns a 400 status code with POST without emailAddress', function(done) {
-        request(app)
-            .post('/api/authenticate')
-            .send('password=' + _authorizedUser.password)
-            .expect(400)
-            .end(done);
-    });
+        it('404 status code with DELETE', function(done) {
+            request(app)
+                .delete('/api/authenticate')
+                .expect(404)
+                .end(done);
+        });
 
-    it('Returns a 400 status code with POST without password', function(done) {
-        request(app)
-            .post('/api/authenticate')
-            .send('emailAddress=' + _authorizedUser.emailAddress)
-            .expect(400)
-            .end(done);
-    });
+        it('400 with POST without emailAddress', function(done) {
+            request(app)
+                .post('/api/authenticate')
+                .send('password=' + _authorizedUser.password)
+                .expect(400)
+                .end(done);
+        });
 
-    it('Returns a 401 status code with POST and unknown emailAddress', function(done) {
-        request(app)
-            .post('/api/authenticate')
-            .send('emailAddress=bad-' + _authorizedUser.emailAddress + '&password=' + _authorizedUser.password)
-            .expect(401)
-            .end(done);
-    });
+        it('400 with POST without password', function(done) {
+            request(app)
+                .post('/api/authenticate')
+                .send('emailAddress=' + _authorizedUser.emailAddress)
+                .expect(400)
+                .end(done);
+        });
 
-    it('Returns a 401 status code with POST and bad password', function(done) {
-        request(app)
-            .post('/api/authenticate')
-            .send('emailAddress=' + _authorizedUser.emailAddress + '&password=bad-' + _authorizedUser.password)
-            .expect(401)
-            .end(done);
-    });
+        it('401 with POST and unknown emailAddress', function(done) {
+            request(app)
+                .post('/api/authenticate')
+                .send('emailAddress=bad-' + _authorizedUser.emailAddress + '&password=' + _authorizedUser.password)
+                .expect(401)
+                .end(done);
+        });
 
-    it('Returns a 401 status code with POST and bad password and bad emailAddress', function(done) {
-        request(app)
-            .post('/api/authenticate')
-            .send('emailAddress=bad-' + _authorizedUser.emailAddress + '&password=bad-' + _authorizedUser.password)
-            .expect(401)
-            .end(done);
+        it('401 with POST and bad password', function(done) {
+            request(app)
+                .post('/api/authenticate')
+                .send('emailAddress=' + _authorizedUser.emailAddress + '&password=bad-' + _authorizedUser.password)
+                .expect(401)
+                .end(done);
+        });
+
+        it('401 with POST and bad password and bad emailAddress', function(done) {
+            request(app)
+                .post('/api/authenticate')
+                .send('emailAddress=bad-' + _authorizedUser.emailAddress + '&password=bad-' + _authorizedUser.password)
+                .expect(401)
+                .end(done);
+        });
     });
 
     it('Returns a 200 status code with POST and Good Credential Set', function(done) {

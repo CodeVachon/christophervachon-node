@@ -5,6 +5,7 @@ var fs = require('fs');
 var port = process.env.PORT || 3030;
 
 var User = require('./../models/user');
+var utl = require('./utilities');
 var AdminUser = {
     _id: '0a0a0a0a0a0a0a0a0a0a0a0a',
     firstName: 'Admin',
@@ -22,7 +23,7 @@ app.listen(port, function(){
     if (error) {
         console.log(error);
     }
-    AdminUser.password = generatePassword();
+    AdminUser.password = utl.generatePassword();
     User.create(AdminUser, function (error, admin) {
         if (error) {
             console.log(error);
@@ -38,18 +39,3 @@ app.listen(port, function(){
 
   });
 });
-
-function generatePassword(minLength, maxLength) {
-    var text = "";
-    var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@%$";
-    var textLength = getRandomInt(minLength || 20, maxLength || 25);
-
-    for( var i=0; i < textLength; i++ ) {
-        text += possible.charAt(Math.floor(Math.random() * possible.length));
-    }
-    return text;
-}
-
-function getRandomInt(min, max) {
-    return Math.floor(Math.random() * (max - min + 1)) + min;
-}

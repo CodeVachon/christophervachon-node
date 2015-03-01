@@ -7,6 +7,27 @@ var request = require('supertest'),
     _authorizedUser = JSON.parse(fs.readFileSync(__dirname + '/_authorizedUser.json', 'utf8'))
 ;
 
+describe('Initialize the App', function() {
+
+    after(function(done) {
+        // Initiate the App First before testing...
+        request(app)
+            .get('/')
+            .expect(200)
+            .end(function() {
+                setTimeout(done, 1000);
+            });
+    });
+
+    it('App Is Initialized', function(done) {
+        request(app)
+            .get('/')
+            .expect(200)
+            .end(done);
+    });
+
+});
+
 describe('Requests to the root path', function() {
 
     it('Returns a 200 status code', function(done) {
@@ -40,7 +61,9 @@ describe('Requests to the root path', function() {
     });
 });
 
-describe("Authentication Tests", function() { require('./authenticaton'); });
-describe("Blog Post Tests", function() { require('./posts'); });
-describe("Projects Tests", function() { require('./projects'); });
-describe("Users Tests", function() { require('./users'); });
+describe("API Tests", function() {
+    describe("Authentication Tests", function() { require('./authenticaton'); });
+    describe("Blog Post Tests", function() { require('./posts'); });
+    describe("Projects Tests", function() { require('./projects'); });
+    describe("Users Tests", function() { require('./users'); });
+});

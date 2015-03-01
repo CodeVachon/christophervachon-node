@@ -5,13 +5,13 @@ var express = require('express'),
     dbName = "cmvBlog-" + (process.env.testing?"Testing":"Production"),
     expressJwt = require('express-jwt'),
     jwt = require('jsonwebtoken'),
-    secret = "Whale",
     bodyParser = require('body-parser'),
     urlencode = bodyParser.urlencoded({ extended: false }),
     jsonBodyParser = bodyParser.json(),
-    User = require('./models/user')
+    User = require('./models/user'),
+    utl = require('./bin/utilities'),
+    secret = utl.generatePassword()
 ;
-
 
 if (process.env.testing) {  console.log("APPLICATION IS IN TESTING MODE!!!");  }
 mongoose.connect('mongodb://localhost/'+dbName, function(error) {
