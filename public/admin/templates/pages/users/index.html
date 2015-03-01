@@ -1,0 +1,33 @@
+<h1>Users</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Email</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tfoot>
+        <tr>
+            <th colspan="4">
+                <a ng-href="#/users/new" class="btn btn-success">New</a>
+            </th>
+        </tr>
+    </tfoot>
+    <tbody>
+        <tr ng-repeat="user in users">
+            <td>{{user.firstName}}</td>
+            <td>{{user.lastName}}</td>
+            <td>{{user.emailAddress}}</td>
+            <td>
+                <div class="btn-toolbar pull-right">
+                    <div class='btn-group'>
+                        <a ng-href="#/users/{{user._id}}" class="btn btn-xs btn-default">view</a>
+                        <a ng-href="#/users/{{user._id}}/edit" class="btn btn-xs btn-default">edit</a>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </tbody>
+</table>

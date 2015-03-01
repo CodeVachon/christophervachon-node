@@ -1,0 +1,30 @@
+
+<div class="media">
+  <div class="media-left">
+      <img class="media-object" ng-src="{{gravatar(user)}}" alt="gravatar">
+  </div>
+  <div class="media-body">
+    <h1 class="media-heading">{{user.firstName}} {{user.lastName}}</h1>
+
+    <dl class="dl-horizontal">
+        <dt>Email Address</dt>
+        <dd><a ng-href="mailto:{{user.emailAddress}}">{{user.emailAddress}}</a></dd>
+        <dt>Administrator</dt>
+        <dd>{{user.isAdmin}}</dd>
+        <dt>Editor</dt>
+        <dd>{{user.canPost}}</dd>
+        <dt>Created At</dt>
+        <dd>{{user.created_at | date: "MMM d, yyyy" }}</dd>
+        <dt>Updated At</dt>
+        <dd>{{user.updated_at | date: "MMM d, yyyy" }}</dd>
+    </dl>
+
+    <div class="btn-group">
+        <a ng-href="#/users/{{user._id}}/edit" class="btn btn-default">Edit</a>
+    </div>
+
+    <div class="btn-group">
+        <button class="btn btn-danger" ng-click="removeUser(user)">Remove</button>
+    </div>
+  </div>
+</div>

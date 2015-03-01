@@ -1,0 +1,22 @@
+<h1>{{pageTitle}}</h1>
+<form class="">
+    <input type="hidden" name="_id" ng-model="user._id" ng-if="user._id" />
+    <div class="form-group">
+        <label for="firstName">First Name</label>
+        <input type="text" class='form-control' name="firstName" ng-model="user.firstName" />
+    </div>
+    <div class="form-group">
+        <label for="lastName">Last Name</label>
+        <input type="text" class='form-control' name="lastName" ng-model="user.lastName" />
+    </div>
+    <div class="form-group">
+        <label for="emailAddress">Email Address</label>
+        <input type="email" class='form-control' name="emailAddress" ng-model="user.emailAddress" />
+    </div>
+    <div class="form-group" ng-if="!user._id">
+        <label for="password">Password</label>
+        <input type="password" class='form-control' name="password" ng-model="user.password" />
+    </div>
+
+    <button class="btn btn-primary btn-lg" ng-click="saveUser(user)" ng-disabled="updating">{{updating ? 'Saving...' : 'Save'}}</button>
+</form>
