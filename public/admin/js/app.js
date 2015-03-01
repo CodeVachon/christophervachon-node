@@ -6,21 +6,28 @@ angular.module('Administrator', ['ngRoute','ngResource','Gravatar'])
     // To enforce Authentication, Check on Location Change for the Token.
     $rootScope.$on( "$locationChangeStart", function(event, next, current) {
 
+        // Check for the Auth Token...
         if (!$window.sessionStorage.token) {
-            console.log("No Token Found!");
+            // Token Not Found... Are we already going to the Login Page?
             if (!next.match(/\/login$/g)) {
-                console.log("not going to login -- Redirect to Login");
+                // not going to login -- Redirect to Login
                 $location.path( "/login" );
             }
         }
+
     });
 }).factory('authInterceptor', function($rootScope, $q, $window, $location) {
     return {
         request: function (config) {
             // This Handles All outgoing Requests
+            // We want to add our Token to all Outgoing Requests
             config.headers = config.headers || {};
             if ($window.sessionStorage.token) {
                 config.headers.Authorization = 'Bearer ' + $window.sessionStorage.token;
+            } else {
+                // If I dont have a token, go get one...
+                // (note that this should not ever actually fire...)
+                $location.path( "/login" );
             }
             return config;
         },
@@ -29,8 +36,9 @@ angular.module('Administrator', ['ngRoute','ngResource','Gravatar'])
             return response || $q.when(response);
         },
         responseError: function (rejection) {
+            // Sever returned an error code...
             if (rejection.status === 401) {
-                console.log("Auth Failed Redirect to Login");
+                console.log("Auth Failed -- Redirect to Login");
                 $location.path( "/login" );
             }
             return $q.reject(rejection);
