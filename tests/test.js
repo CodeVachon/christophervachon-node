@@ -40,6 +40,7 @@ describe('Requests to the root path', function() {
     });
 });
 
+describe("Authentication Tests", function() { require('./authenticaton'); });
 describe("Blog Post Tests", function() { require('./posts'); });
 describe("Projects Tests", function() { require('./projects'); });
 describe("Users Tests", function() { require('./users'); });
