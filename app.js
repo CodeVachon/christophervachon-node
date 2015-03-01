@@ -3,8 +3,13 @@ var express = require('express'),
     app = express(),
     mongoose = require('mongoose'),
     dbName = "cmvBlog-" + (process.env.testing?"Testing":"Production"),
-    passport = require('passport')
-    authController = require('./auth')
+    expressJwt = require('express-jwt'),
+    jwt = require('jsonwebtoken'),
+    secret = "Whale",
+    bodyParser = require('body-parser'),
+    urlencode = bodyParser.urlencoded({ extended: false }),
+    jsonBodyParser = bodyParser.json(),
+    User = require('./models/user')
 ;
 
 
@@ -20,7 +25,6 @@ mongoose.connect('mongodb://localhost/'+dbName, function(error) {
 
 app.set('view engine', 'jade');
 app.use(express.static(__dirname + '/public'));
-app.use(passport.initialize());
 
 
 app.get('/', function (request, response) {
@@ -28,16 +32,61 @@ app.get('/', function (request, response) {
 }); // close get('/')
 
 
-var _postsRouter = require('./routes/posts');
-app.use('/api/posts', _postsRouter);
+// Handel Authentication Tokens
+app.post('/api/authenticate', jsonBodyParser, urlencode, function (request, response) {
+    //if is invalid, return 401
+    if (!request.body.emailAddress) {
+        response.status(401).json('Expected "emailAddress" not received');
+        return;
+    }
+    if (!request.body.password) {
+        response.status(401).json('Expected "password" not received');
+        return;
+    }
+
+    User.findOne({ emailAddress: request.body.emailAddress }, function (error, user) {
+        if (error) {
+            response.status(401).json('Wrong user or password');
+            return;
+        }
+
+        // No user found with that username
+        if (!user) {
+            response.status(401).json('Wrong user or password');
+            return;
+        }
+
+        // Make sure the password is correct
+        user.verifyPassword(request.body.password, function(error, isMatch) {
+            if (error) {
+                response.status(401).json('Wrong user or password');
+                return;
+            }
+
+            // Password did not match
+            if (!isMatch) {
+                response.status(401).json('Wrong user or password');
+                return;
+            }
+
+            // Success
+            var token = jwt.sign(user, secret, { expiresInMinutes: 60*5 });
+            response.json({ token: token });
+        });
+    });
+}); // close app.post('/api/authenticate')
 
 
-var _projectRouter = require('./routes/projects');
-app.use('/api/projects', _projectRouter);
+var _postsRouter = require('./routes/api/posts');
+app.use('/api/posts', expressJwt({secret: secret}), _postsRouter);
 
 
-var _usersRouter = require('./routes/users');
-app.use('/api/users', _usersRouter);
+var _projectRouter = require('./routes/api/projects');
+app.use('/api/projects', expressJwt({secret: secret}), _projectRouter);
+
+
+var _usersRouter = require('./routes/api/users');
+app.use('/api/users', expressJwt({secret: secret}), _usersRouter);
 
 
 module.exports = app;

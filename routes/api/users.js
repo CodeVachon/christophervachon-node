@@ -3,7 +3,7 @@ var express = require('express'),
     bodyParser = require('body-parser'),
     urlencode = bodyParser.urlencoded({ extended: false }),
     jsonBodyParser = bodyParser.json(),
-    User = require('../models/user')
+    User = require('../../models/user')
 ;
 
 

@@ -6,7 +6,8 @@ var request = require('supertest'),
     articleID = "54dbfc670629ed3b226b8b41",
     Article = require('../models/article'),
     fs = require('fs'),
-    _authorizedUser = JSON.parse(fs.readFileSync(__dirname + '/_authorizedUser.json', 'utf8'))
+    _authorizedUser = JSON.parse(fs.readFileSync(__dirname + '/_authorizedUser.json', 'utf8')),
+    _authorizedUserToken = ""
 ;
 
 describe('POST Request to Posts Path', function() {
@@ -21,11 +22,24 @@ describe('POST Request to Posts Path', function() {
         });
     });
 
+    beforeEach(function(done) {
+        request(app)
+            .post('/api/authenticate')
+            .send('emailAddress=' + _authorizedUser.emailAddress + '&password=' + _authorizedUser.password)
+            .end(function(err, res) {
+                if (err) {
+                    console.log(err);
+                }
+                _authorizedUserToken = res.body.token;
+                done();
+            });
+    });
+
     var path = '/api/posts';
     it('Returns a 201 status code', function(done) {
         request(app)
             .post(path)
-            .auth(_authorizedUser.emailAddress, _authorizedUser.password)
+            .set('Authorization', 'Bearer ' + _authorizedUserToken)
             .send('_id='+articleID+'&title=Test+Article&summary=Test+Summary&body=Test+Body')
             .expect(/Test Article/i)
             .expect(201)
@@ -43,7 +57,7 @@ describe('POST Request to Posts Path', function() {
         it('posting without a Title', function(done) {
             request(app)
                 .post(path)
-                .auth(_authorizedUser.emailAddress, _authorizedUser.password)
+                .set('Authorization', 'Bearer ' + _authorizedUserToken)
                 .send('summary=Test+Summary&body=Test+Body')
                 .expect(400)
                 .expect('Content-Type', /json/i)
@@ -57,7 +71,7 @@ describe('POST Request to Posts Path', function() {
         it('posting without a Summary', function(done) {
             request(app)
                 .post(path)
-                .auth(_authorizedUser.emailAddress, _authorizedUser.password)
+                .set('Authorization', 'Bearer ' + _authorizedUserToken)
                 .send('title=Test+Article&body=Test+Body')
                 .expect(400)
                 .expect('Content-Type', /json/i)
@@ -71,7 +85,7 @@ describe('POST Request to Posts Path', function() {
         it('posting without a Body', function(done) {
             request(app)
                 .post(path)
-                .auth(_authorizedUser.emailAddress, _authorizedUser.password)
+                .set('Authorization', 'Bearer ' + _authorizedUserToken)
                 .send('title=Test+Article&summary=Test+Summary')
                 .expect(400)
                 .expect('Content-Type', /json/i)
@@ -86,12 +100,26 @@ describe('POST Request to Posts Path', function() {
 });
 
 describe('GET Requests to Posts', function() {
+
+    beforeEach(function(done) {
+        request(app)
+            .post('/api/authenticate')
+            .send('emailAddress=' + _authorizedUser.emailAddress + '&password=' + _authorizedUser.password)
+            .end(function(err, res) {
+                if (err) {
+                    console.log(err);
+                }
+                _authorizedUserToken = res.body.token;
+                done();
+            });
+    });
+
     describe('list path', function() {
         var path = '/api/posts';
         it('Returns a 200 status code', function(done) {
             request(app)
                 .get(path)
-                .auth(_authorizedUser.emailAddress, _authorizedUser.password)
+                .set('Authorization', 'Bearer ' + _authorizedUserToken)
                 .expect(200)
                 .end(done);
         });
@@ -99,7 +127,7 @@ describe('GET Requests to Posts', function() {
         it('Returns JSON', function(done) {
             request(app)
                 .get(path)
-                .auth(_authorizedUser.emailAddress, _authorizedUser.password)
+                .set('Authorization', 'Bearer ' + _authorizedUserToken)
                 .expect('Content-Type', /json/i)
                 .end(done);
         });
@@ -107,7 +135,7 @@ describe('GET Requests to Posts', function() {
         it('Returns JSON Array', function(done) {
             request(app)
                 .get(path)
-                .auth(_authorizedUser.emailAddress, _authorizedUser.password)
+                .set('Authorization', 'Bearer ' + _authorizedUserToken)
                 .expect(function(res) {
                     if (typeof(res.body) == "Array") { throw new Error("Expected an Array"); }
                 })
@@ -120,7 +148,7 @@ describe('GET Requests to Posts', function() {
         it('Returns a 200 status code ['+path+']', function(done) {
             request(app)
                 .get(path)
-                .auth(_authorizedUser.emailAddress, _authorizedUser.password)
+                .set('Authorization', 'Bearer ' + _authorizedUserToken)
                 .expect(200)
                 .end(done);
         });
@@ -128,7 +156,7 @@ describe('GET Requests to Posts', function() {
         it('Returns JSON', function(done) {
             request(app)
                 .get(path)
-                .auth(_authorizedUser.emailAddress, _authorizedUser.password)
+                .set('Authorization', 'Bearer ' + _authorizedUserToken)
                 .expect('Content-Type', /json/i)
                 .end(done);
         });
@@ -136,7 +164,7 @@ describe('GET Requests to Posts', function() {
         it('Returns JSON Object', function(done) {
             request(app)
                 .get(path)
-                .auth(_authorizedUser.emailAddress, _authorizedUser.password)
+                .set('Authorization', 'Bearer ' + _authorizedUserToken)
                 .expect(function(res) {
                     if (typeof(res.body) == "Object") { throw new Error("Expected an Object"); }
                 })
@@ -146,7 +174,7 @@ describe('GET Requests to Posts', function() {
         it('Returns Test Article', function(done) {
             request(app)
                 .get(path)
-                .auth(_authorizedUser.emailAddress, _authorizedUser.password)
+                .set('Authorization', 'Bearer ' + _authorizedUserToken)
                 .expect(/Test Article/gi)
                 .end(done);
         });
@@ -154,7 +182,7 @@ describe('GET Requests to Posts', function() {
         it('Returns 404 when invalid ID is passed', function(done) {
             request(app)
                 .get(path.replace(/4/g,'6'))
-                .auth(_authorizedUser.emailAddress, _authorizedUser.password)
+                .set('Authorization', 'Bearer ' + _authorizedUserToken)
                 .expect(404)
                 .end(done);
         });
@@ -163,10 +191,24 @@ describe('GET Requests to Posts', function() {
 
 describe('PUT Requests to Posts', function() {
     var path = '/api/posts/'+articleID;
+
+    beforeEach(function(done) {
+        request(app)
+            .post('/api/authenticate')
+            .send('emailAddress=' + _authorizedUser.emailAddress + '&password=' + _authorizedUser.password)
+            .end(function(err, res) {
+                if (err) {
+                    console.log(err);
+                }
+                _authorizedUserToken = res.body.token;
+                done();
+            });
+    });
+
     it('Returns a 202 status code', function(done) {
         request(app)
             .put(path)
-            .auth(_authorizedUser.emailAddress, _authorizedUser.password)
+            .set('Authorization', 'Bearer ' + _authorizedUserToken)
             .send('title=Test+Article+Renamed')
             .expect(/Test Article Renamed/i)
             .expect(202)
@@ -183,17 +225,31 @@ describe('PUT Requests to Posts', function() {
 
 describe('DELETE Requests to Posts', function() {
     var path = '/api/posts/'+articleID;
+
+    beforeEach(function(done) {
+        request(app)
+            .post('/api/authenticate')
+            .send('emailAddress=' + _authorizedUser.emailAddress + '&password=' + _authorizedUser.password)
+            .end(function(err, res) {
+                if (err) {
+                    console.log(err);
+                }
+                _authorizedUserToken = res.body.token;
+                done();
+            });
+    });
+
     it('Returns a 204 status code', function(done) {
         request(app)
             .delete(path)
-            .auth(_authorizedUser.emailAddress, _authorizedUser.password)
+            .set('Authorization', 'Bearer ' + _authorizedUserToken)
             .expect(204)
             .end(done);
     });
     it('Post can no longer be found', function(done) {
         request(app)
             .get(path)
-            .auth(_authorizedUser.emailAddress, _authorizedUser.password)
+            .set('Authorization', 'Bearer ' + _authorizedUserToken)
             .expect(404)
             .expect('Content-Type', /json/i)
             .end(done);
