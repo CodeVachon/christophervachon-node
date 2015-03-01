@@ -1,0 +1,8 @@
+{
+    "_id": "21dbfd670629dd3b226c8b44",
+    "firstName": "Unautherized",
+    "lastName": "User",
+    "emailAddress": "unauthd@user.local",
+    "password": "123456",
+    "isAdmin": false
+}

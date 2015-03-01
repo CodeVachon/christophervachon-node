@@ -4,7 +4,8 @@ var request = require('supertest'),
     app = require('./../app'),
     User = require('./../models/user'),
     fs = require('fs'),
-    _authorizedUser = JSON.parse(fs.readFileSync(__dirname + '/_authorizedUser.json', 'utf8'))
+    _authorizedUser = JSON.parse(fs.readFileSync(__dirname + '/_authorizedUser.json', 'utf8')),
+    _unauthorizedUser = JSON.parse(fs.readFileSync(__dirname + '/_unautherizedUser.json', 'utf8'))
 ;
 
 describe('Initialize the App', function() {
@@ -52,10 +53,20 @@ describe('Requests to the root path', function() {
                 console.log(error);
             }
             User.create(_authorizedUser, function (error, post) {
-              if (error) {
-                  console.log(error);
-              }
-              done();
+                if (error) {
+                    console.log(error);
+                }
+                User.findByIdAndRemove(_unauthorizedUser._id, function(error) {
+                    if (error) {
+                        console.log(error);
+                    }
+                    User.create(_unauthorizedUser, function (error, post) {
+                        if (error) {
+                            console.log(error);
+                        }
+                        done();
+                    });
+                });
             });
         });
     });

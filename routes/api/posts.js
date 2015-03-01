@@ -83,15 +83,6 @@ router.route('/:id')
                 response.status(202).json(article);
             });
         });
-        /*
-        Article.findByIdAndUpdate(request.params.id, request.body, function (error, post) {
-          if (error) {
-              response.status(400).json(error);
-              return;
-          }
-          response.status(202).json(post);
-        });
-        */
     }) // close put
     .delete(function(request, response) {
         Article.findByIdAndRemove(request.params.id, function (error, post) {

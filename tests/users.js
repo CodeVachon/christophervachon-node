@@ -7,8 +7,45 @@ var request = require('supertest'),
     User = require('../models/user'),
     fs = require('fs'),
     _authorizedUser = JSON.parse(fs.readFileSync(__dirname + '/_authorizedUser.json', 'utf8')),
+    _unauthorizedUser = JSON.parse(fs.readFileSync(__dirname + '/_unautherizedUser.json', 'utf8'))
     _authorizedUserToken = ""
 ;
+
+describe('Expect 401 error with not Token is used', function() {
+    var path = '/api/users'
+    it('fails on GET', function(done) {
+        request(app)
+            .get(path)
+            .expect(401)
+            .end(done);
+    });
+    it('fails on POST', function(done) {
+        request(app)
+            .post(path)
+            .send('emailAddress=' + _authorizedUser.emailAddress + '&password=' + _authorizedUser.password)
+            .expect(401)
+            .end(done);
+    });
+    it('fails on GET with ID', function(done) {
+        request(app)
+            .get(path + "/" + userId)
+            .expect(401)
+            .end(done);
+    });
+    it('fails on PUT', function(done) {
+        request(app)
+            .put(path + "/" + userId)
+            .send('emailAddress=' + _authorizedUser.emailAddress + '&password=' + _authorizedUser.password)
+            .expect(401)
+            .end(done);
+    });
+    it('fails on DELETE', function(done) {
+        request(app)
+            .delete(path + "/" + userId)
+            .expect(401)
+            .end(done);
+    });
+});
 
 describe('POST Requests to Users path', function() {
     before(function(done) {
@@ -112,6 +149,31 @@ describe('POST Requests to Users path', function() {
 
 });
 
+describe('POST Requests to Users With unAuthed Token', function() {
+    beforeEach(function(done) {
+        request(app)
+            .post('/api/authenticate')
+            .send('emailAddress=' + _unauthorizedUser.emailAddress + '&password=' + _unauthorizedUser.password)
+            .end(function(err, res) {
+                if (err) {
+                    console.log(err);
+                }
+                _authorizedUserToken = res.body.token;
+                done();
+            });
+    });
+    var path = '/api/users';
+    it('Returns a 401 status code', function(done) {
+        request(app)
+            .post(path)
+            .set('Authorization', 'Bearer ' + _authorizedUserToken)
+            .send('_id='+userId+'&firstName=Admin&lastName=Strator&emailAddress=admin@local.host&password=test')
+            .expect(401)
+            .expect('Content-Type', /json/i)
+            .end(done);
+    });
+});
+
 describe('GET Requests to Users path', function() {
     beforeEach(function(done) {
         request(app)
@@ -203,7 +265,7 @@ describe('GET Requests to Users path', function() {
     });
 });
 
-describe('PUT Requests to Users', function() {
+describe('PUT Requests to Users With Authed Token', function() {
     beforeEach(function(done) {
         request(app)
             .post('/api/authenticate')
@@ -233,7 +295,56 @@ describe('PUT Requests to Users', function() {
     });
 });
 
-describe('DELETE Requests to Users', function() {
+describe('PUT Requests to Users With unAuthed Token', function() {
+    beforeEach(function(done) {
+        request(app)
+            .post('/api/authenticate')
+            .send('emailAddress=' + _unauthorizedUser.emailAddress + '&password=' + _unauthorizedUser.password)
+            .end(function(err, res) {
+                if (err) {
+                    console.log(err);
+                }
+                _authorizedUserToken = res.body.token;
+                done();
+            });
+    });
+    var path = '/api/users/'+userId;
+    it('Returns a 401 status code', function(done) {
+        request(app)
+            .put(path)
+            .set('Authorization', 'Bearer ' + _authorizedUserToken)
+            .send('lastName=Strator+Renamed')
+            .expect(401)
+            .expect('Content-Type', /json/i)
+            .end(done);
+    });
+});
+
+describe('DELETE Requests to Users With unAuthed Token', function() {
+    beforeEach(function(done) {
+        request(app)
+            .post('/api/authenticate')
+            .send('emailAddress=' + _unauthorizedUser.emailAddress + '&password=' + _unauthorizedUser.password)
+            .end(function(err, res) {
+                if (err) {
+                    console.log(err);
+                }
+                _authorizedUserToken = res.body.token;
+                done();
+            });
+    });
+    var path = '/api/users/'+userId;
+
+    it('Returns a 401 status code', function(done) {
+        request(app)
+            .delete(path)
+            .set('Authorization', 'Bearer ' + _authorizedUserToken)
+            .expect(401)
+            .end(done);
+    });
+});
+
+describe('DELETE Requests to Users With Authed Token', function() {
     beforeEach(function(done) {
         request(app)
             .post('/api/authenticate')

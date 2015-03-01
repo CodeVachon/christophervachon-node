@@ -23,6 +23,11 @@ router.route('/')
     .post(jsonBodyParser, urlencode, function(request, response) {
         var newUser = request.body;
 
+        if (!request.user.isAdmin) {
+            response.status(401).json("Unauthorized");
+            return;
+        }
+
         var errors = {};
         if ( !newUser.firstName ) { errors.firstName = "No firstName found"; }
         if ( !newUser.lastName ) { errors.lastName = "No lastName found"; }
@@ -62,6 +67,12 @@ router.route('/:id')
         });
     }) // close get
     .put(jsonBodyParser, urlencode, function(request, response) {
+
+        if (!request.user.isAdmin) {
+            response.status(401).json("Unauthorized");
+            return;
+        }
+
         User.findByIdAndUpdate(request.params.id, request.body, function (error, user) {
           if (error) {
               response.status(400).json(error);
@@ -72,6 +83,12 @@ router.route('/:id')
         });
     }) // close put
     .delete(function(request, response) {
+
+        if (!request.user.isAdmin) {
+            response.status(401).json("Unauthorized");
+            return;
+        }
+
         User.findByIdAndRemove(request.params.id, function (error, post) {
             if (error) {
                 response.status(400).json(error);

@@ -90,4 +90,17 @@ var _usersRouter = require('./routes/api/users');
 app.use('/api/users', expressJwt({secret: secret}), _usersRouter);
 
 
+// Error Handeler
+app.use(function(err, req, res, next){
+
+    if (err.status === 401) {
+        res.status(err.status).json(err.message || "Unauthorized Access");
+    } else if (err.status) {
+        res.status(err.status).json(err.message || "Unknown Error");
+    } else {
+        res.status(500).json("Something Went Horribly Wrong!!!");
+    }
+
+});
+
 module.exports = app;
