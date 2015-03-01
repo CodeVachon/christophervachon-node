@@ -14,7 +14,7 @@ angular.module('Administrator', ['ngRoute','ngResource','Gravatar'])
             }
         }
     });
-}).factory('authInterceptor', function($rootScope, $q, $window) {
+}).factory('authInterceptor', function($rootScope, $q, $window, $location) {
     return {
         request: function (config) {
             // This Handles All outgoing Requests
@@ -26,11 +26,14 @@ angular.module('Administrator', ['ngRoute','ngResource','Gravatar'])
         },
         response: function (response) {
             // This Handles HTTP Responses
-            if (response.status === 401) {
+            return response || $q.when(response);
+        },
+        responseError: function (rejection) {
+            if (rejection.status === 401) {
                 console.log("Auth Failed Redirect to Login");
                 $location.path( "/login" );
             }
-            return response || $q.when(response);
+            return $q.reject(rejection);
         }
     };
 }).config(function ($httpProvider) {
