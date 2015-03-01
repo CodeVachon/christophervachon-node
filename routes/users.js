@@ -2,6 +2,7 @@ var express = require('express'),
     router = express.Router(),
     bodyParser = require('body-parser'),
     urlencode = bodyParser.urlencoded({ extended: false }),
+    jsonBodyParser = bodyParser.json(),
     User = require('../models/user')
 ;
 
@@ -13,10 +14,13 @@ router.route('/')
               response.status(500).json(errors);
               return;
           }
+          for (var i=0,x=users.length; i<x; i++) {
+              users[i].password = undefined;
+          }
           response.status(200).json(users);
         });
     }) // close get
-    .post(urlencode, function(request, response) {
+    .post(jsonBodyParser, urlencode, function(request, response) {
         var newUser = request.body;
 
         var errors = {};
@@ -30,12 +34,13 @@ router.route('/')
             return;
         }
 
-        User.create(newUser, function (error, post) {
+        User.create(newUser, function (error, user) {
           if (error) {
               response.status(500).json(error);
               return;
           }
-          response.status(201).json(post);
+          user.password = undefined;
+          response.status(201).json(user);
         });
     }) // close post
 ; // close route('/')
@@ -43,25 +48,27 @@ router.route('/')
 
 router.route('/:id')
     .get(function(request, response) {
-        User.findById(request.params.id, function (error, post) {
+        User.findById(request.params.id, function (error, user) {
           if (error) {
               response.status(500).json(error);
               return;
           }
-          if (post == null) {
+          if (user == null) {
               response.status(404).json("Not found");
               return;
           }
-          response.status(200).json(post);
+          user.password = undefined;
+          response.status(200).json(user);
         });
     }) // close get
-    .put(urlencode, function(request, response) {
-        User.findByIdAndUpdate(request.params.id, request.body, function (error, post) {
+    .put(jsonBodyParser, urlencode, function(request, response) {
+        User.findByIdAndUpdate(request.params.id, request.body, function (error, user) {
           if (error) {
               response.status(400).json(error);
               return;
           }
-          response.status(202).json(post);
+          user.password = undefined;
+          response.status(202).json(user);
         });
     }) // close put
     .delete(function(request, response) {

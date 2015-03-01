@@ -2,6 +2,7 @@ var express = require('express'),
     router = express.Router(),
     bodyParser = require('body-parser'),
     urlencode = bodyParser.urlencoded({ extended: false }),
+    jsonBodyParser = bodyParser.json(),
     Project = require('../models/project')
 ;
 
@@ -15,7 +16,7 @@ router.route('/')
           response.status(200).json(articles);
         });
     }) // close get
-    .post(urlencode, function(request, response) {
+    .post(jsonBodyParser, urlencode, function(request, response) {
         var newProject = request.body;
 
         var errors = {};
@@ -51,7 +52,7 @@ router.route('/:id')
           response.status(200).json(post);
         });
     }) // close get
-    .put(urlencode, function(request, response) {
+    .put(jsonBodyParser, urlencode, function(request, response) {
         Project.findByIdAndUpdate(request.params.id, request.body, function (error, post) {
           if (error) {
               response.status(400).json(error);

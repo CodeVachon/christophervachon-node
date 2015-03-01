@@ -33,6 +33,7 @@ describe('POST Requests to Users path', function() {
                 if (res.body.firstName != "Admin") { throw new Error("Incorrect firstName Returned"); }
                 if (res.body.lastName != "Strator") { throw new Error("Incorrect lastName Returned"); }
                 if (res.body.emailAddress != "admin@local.host") { throw new Error("Incorrect emailAddress Returned"); }
+                if (res.body.password) { throw new Error("Password should not be sent"); }
             })
             .end(done);
     });
@@ -123,6 +124,7 @@ describe('GET Requests to Users path', function() {
                 .auth(_authorizedUser.emailAddress, _authorizedUser.password)
                 .expect(function(res) {
                     if (typeof(res.body) == "Array") { throw new Error("Expected an Array"); }
+                    if (res.body[0].password) { throw new Error("Password should not be sent"); }
                 })
                 .end(done);
         });
@@ -152,6 +154,7 @@ describe('GET Requests to Users path', function() {
                 .auth(_authorizedUser.emailAddress, _authorizedUser.password)
                 .expect(function(res) {
                     if (typeof(res.body) == "Object") { throw new Error("Expected an Object"); }
+                    if (res.body.password) { throw new Error("Password should not be sent"); }
                 })
                 .end(done);
         });
@@ -187,6 +190,7 @@ describe('PUT Requests to Users', function() {
             .expect('Content-Type', /json/i)
             .expect(function(res) {
                 if (res.body.lastName != "Strator Renamed") { throw new Error("Incorrect LastName Returned"); }
+                if (res.body.password) { throw new Error("Password should not be sent"); }
             })
             .end(done);
     });

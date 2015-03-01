@@ -29,15 +29,15 @@ app.get('/', function (request, response) {
 
 
 var _postsRouter = require('./routes/posts');
-app.use('/api/posts', authController.isAuthenticated, _postsRouter);
+app.use('/api/posts', _postsRouter);
 
 
 var _projectRouter = require('./routes/projects');
-app.use('/api/projects', authController.isAuthenticated, _projectRouter);
+app.use('/api/projects', _projectRouter);
 
 
 var _usersRouter = require('./routes/users');
-app.use('/api/users', authController.isAuthenticated, _usersRouter);
+app.use('/api/users', _usersRouter);
 
 
 module.exports = app;
