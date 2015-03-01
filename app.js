@@ -36,11 +36,11 @@ app.get('/', function (request, response) {
 app.post('/api/authenticate', jsonBodyParser, urlencode, function (request, response) {
     //if is invalid, return 401
     if (!request.body.emailAddress) {
-        response.status(401).json('Expected "emailAddress" not received');
+        response.status(400).json('Expected "emailAddress" not received');
         return;
     }
     if (!request.body.password) {
-        response.status(401).json('Expected "password" not received');
+        response.status(400).json('Expected "password" not received');
         return;
     }
 
@@ -70,8 +70,9 @@ app.post('/api/authenticate', jsonBodyParser, urlencode, function (request, resp
             }
 
             // Success
+            user.password = undefined;
             var token = jwt.sign(user, secret, { expiresInMinutes: 60*5 });
-            response.json({ token: token });
+            response.json({ token: token, user: user });
         });
     });
 }); // close app.post('/api/authenticate')
