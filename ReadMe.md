@@ -24,5 +24,6 @@ npm test
 | Mocha | This is a testing framework for Node | [http://mochajs.org/] |
 | Mongoose | This is a CRUD framework for MongoDB | [http://mongoosejs.com/] |
 | body-parser | This is middleware to put incoming variables into request |  [https://github.com/expressjs/body-parser] |
-| passport | Node Authentication | [http://passportjs.org/] |
-| passport-http | Node HTTP Authentication | [http://passportjs.org/] |
+| AngularJS | This front end JavaScript Framework handels my Administration | [https://angularjs.org/] |
+| JSON Web Token | this handles authentication keys | [https://github.com/auth0/node-jsonwebtoken] |
+| express-jwt | Middleware for JWTs | [http://github.com/auth0/express-jwt/] |
