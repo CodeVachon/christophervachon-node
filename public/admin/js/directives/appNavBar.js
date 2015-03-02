@@ -6,6 +6,12 @@ function($sce, $window, $location) {
         restrict: "E",
         templateUrl: './templates/directives/appNavBar.html',
         controller: function($scope) {
+            $scope.navItems = [
+                //{ label: "Articles", path: "articles" },
+                //{ label: "Projects", path: "projects" },
+                { label: "Users", path: "users" }
+            ];
+
             $scope.isLoggedIn = function() {
                 return $window.sessionStorage.token;
             }
@@ -22,8 +28,7 @@ function($sce, $window, $location) {
                 return userData._id;
             }
         },
-        link: function() {
-
+        link: function($scope) {
         }
     };
 }]);

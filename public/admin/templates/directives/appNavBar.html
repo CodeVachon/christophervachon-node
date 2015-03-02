@@ -12,7 +12,7 @@
 
         <div class="collapse navbar-collapse navbar-right" id="navmenu" ng-if="isLoggedIn()">
             <ul class="nav navbar-nav">
-                <li ng-class="{'active': isActiveMenu('users')}"><a href="#/users">Users</a></li>
+                <li ng-repeat="item in navItems" ng-class="{'active': isActiveMenu('{{item.path}}')}"><a ng-href="#/{{item.path}}">{{item.label}}</a></li>
                 <li class="dropdown">
                     <a href='' class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><span class="glyphicon glyphicon-cog"></span> <span class="caret"></span></a>
                     <ul class="dropdown-menu" role="menu">
