@@ -4,6 +4,10 @@ angular.module('Administrator')
         var _controller = this;
         $scope.user = Users.get({id: $routeParams.id});
         $scope.pageTitle = "Edit User";
+        $scope.options = [
+            {label: 'Yes', value: true},
+            {label: 'No', value: false}
+        ];
 
         $scope.saveUser = function(user) {
             $scope.errors = null;

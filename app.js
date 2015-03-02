@@ -1,4 +1,3 @@
-
 var express = require('express'),
     app = express(),
     mongoose = require('mongoose'),
@@ -22,19 +21,15 @@ mongoose.connect('mongodb://localhost/'+dbName, function(error) {
     }
 });
 
-
 app.set('view engine', 'jade');
 app.use(express.static(__dirname + '/public'));
-
 
 app.get('/', function (request, response) {
     response.render('index', {});
 }); // close get('/')
 
-
 // Handel Authentication Tokens
 app.post('/api/authenticate', jsonBodyParser, urlencode, function (request, response) {
-    //if is invalid, return 401
     if (!request.body.emailAddress) {
         response.status(400).json('Expected "emailAddress" not received');
         return;
@@ -77,18 +72,14 @@ app.post('/api/authenticate', jsonBodyParser, urlencode, function (request, resp
     });
 }); // close app.post('/api/authenticate')
 
-
 var _postsRouter = require('./routes/api/posts');
 app.use('/api/posts', expressJwt({secret: secret}), _postsRouter);
-
 
 var _projectRouter = require('./routes/api/projects');
 app.use('/api/projects', expressJwt({secret: secret}), _projectRouter);
 
-
 var _usersRouter = require('./routes/api/users');
 app.use('/api/users', expressJwt({secret: secret}), _usersRouter);
-
 
 // Error Handeler
 app.use(function(err, req, res, next){
@@ -96,8 +87,10 @@ app.use(function(err, req, res, next){
     if (err.status === 401) {
         res.status(err.status).json(err.message || "Unauthorized Access");
     } else if (err.status) {
+        console.log(err);
         res.status(err.status).json(err.message || "Unknown Error");
     } else {
+        console.log(err);
         res.status(500).json("Something Went Horribly Wrong!!!");
     }
 
