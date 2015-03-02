@@ -7,10 +7,47 @@ var request = require('supertest'),
     Project = require('../models/project'),
     fs = require('fs'),
     _authorizedUser = JSON.parse(fs.readFileSync(__dirname + '/_authorizedUser.json', 'utf8')),
+    _unauthorizedUser = JSON.parse(fs.readFileSync(__dirname + '/_unautherizedUser.json', 'utf8'))
     _authorizedUserToken = ""
 ;
 
-describe('POST Requests to Projects path', function() {
+describe('Expect 401 error with not Token is used', function() {
+    var path = '/api/projects'
+    it('fails on GET', function(done) {
+        request(app)
+            .get(path)
+            .expect(401)
+            .end(done);
+    });
+    it('fails on POST', function(done) {
+        request(app)
+            .post(path)
+            .send('_id='+projectID+'&title=Test+Project&summary=Test+Summary')
+            .expect(401)
+            .end(done);
+    });
+    it('fails on GET with ID', function(done) {
+        request(app)
+            .get(path + "/" + projectID)
+            .expect(401)
+            .end(done);
+    });
+    it('fails on PUT', function(done) {
+        request(app)
+            .put(path + "/" + projectID)
+            .send('_id='+projectID+'&title=Test+Project&summary=Test+Summary')
+            .expect(401)
+            .end(done);
+    });
+    it('fails on DELETE', function(done) {
+        request(app)
+            .delete(path + "/" + projectID)
+            .expect(401)
+            .end(done);
+    });
+});
+
+describe('POST Requests to Projects path With Admin Token', function() {
     before(function(done) {
         // We are going to add in article with a specfic id,
         // lets ensure its not there first.
@@ -82,6 +119,35 @@ describe('POST Requests to Projects path', function() {
     });
 
 });
+
+describe('POST Requests to Projects path With nonAdmin Token', function() {
+
+    beforeEach(function(done) {
+        request(app)
+            .post('/api/authenticate')
+            .send('emailAddress=' + _unauthorizedUser.emailAddress + '&password=' + _unauthorizedUser.password)
+            .end(function(err, res) {
+                if (err) {
+                    console.log(err);
+                }
+                _authorizedUserToken = res.body.token;
+                done();
+            });
+    });
+
+    var path = '/api/projects';
+    it('Returns a 401 status code', function(done) {
+        request(app)
+            .post(path)
+            .set('Authorization', 'Bearer ' + _authorizedUserToken)
+            .send('_id='+projectID+'&title=Test+Project&summary=Test+Summary')
+            .expect(401)
+            .expect('Content-Type', /json/i)
+            .end(done);
+    });
+
+});
+
 
 describe('GET Requests to Projects path', function() {
 
@@ -175,7 +241,7 @@ describe('GET Requests to Projects path', function() {
     });
 });
 
-describe('PUT Requests to Projects', function() {
+describe('PUT Requests to Projects With Admin Token', function() {
     var path = '/api/projects/'+projectID;
 
     beforeEach(function(done) {
@@ -206,7 +272,59 @@ describe('PUT Requests to Projects', function() {
     });
 });
 
-describe('DELETE Requests to Projects', function() {
+describe('PUT Requests to Projects With nonAdmin Token', function() {
+    var path = '/api/projects/'+projectID;
+
+    beforeEach(function(done) {
+        request(app)
+            .post('/api/authenticate')
+            .send('emailAddress=' + _unauthorizedUser.emailAddress + '&password=' + _unauthorizedUser.password)
+            .end(function(err, res) {
+                if (err) {
+                    console.log(err);
+                }
+                _authorizedUserToken = res.body.token;
+                done();
+            });
+    });
+
+    it('Returns a 401 status code', function(done) {
+        request(app)
+            .put(path)
+            .set('Authorization', 'Bearer ' + _authorizedUserToken)
+            .send('title=Test+Project+Renamed')
+            .expect(401)
+            .expect('Content-Type', /json/i)
+            .end(done);
+    });
+});
+
+describe('DELETE Requests to Projects with nonAdmin Token', function() {
+    var path = '/api/projects/'+projectID;
+
+    beforeEach(function(done) {
+        request(app)
+            .post('/api/authenticate')
+            .send('emailAddress=' + _unauthorizedUser.emailAddress + '&password=' + _unauthorizedUser.password)
+            .end(function(err, res) {
+                if (err) {
+                    console.log(err);
+                }
+                _authorizedUserToken = res.body.token;
+                done();
+            });
+    });
+
+    it('Returns a 401 status code', function(done) {
+        request(app)
+            .delete(path)
+            .set('Authorization', 'Bearer ' + _authorizedUserToken)
+            .expect(401)
+            .end(done);
+    });
+});
+
+describe('DELETE Requests to Projects with Admin Token', function() {
     var path = '/api/projects/'+projectID;
 
     beforeEach(function(done) {

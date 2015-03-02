@@ -17,6 +17,11 @@ router.route('/')
         });
     }) // close get
     .post(jsonBodyParser, urlencode, function(request, response) {
+        if (!request.user.isAdmin) {
+            response.status(401).json("Unauthorized");
+            return;
+        }
+
         var newProject = request.body;
 
         var errors = {};
@@ -53,6 +58,11 @@ router.route('/:id')
         });
     }) // close get
     .put(jsonBodyParser, urlencode, function(request, response) {
+        if (!request.user.isAdmin) {
+            response.status(401).json("Unauthorized");
+            return;
+        }
+
         Project.findByIdAndUpdate(request.params.id, request.body, function (error, post) {
           if (error) {
               response.status(400).json(error);
@@ -62,6 +72,11 @@ router.route('/:id')
         });
     }) // close put
     .delete(function(request, response) {
+        if (!request.user.isAdmin) {
+            response.status(401).json("Unauthorized");
+            return;
+        }
+
         Project.findByIdAndRemove(request.params.id, function (error, post) {
             if (error) {
                 response.status(400).json(error);
