@@ -1,15 +1,21 @@
-<h1>Login</h1>
-<div class="alert alert-danger" role="alert" ng-if="errors">
-    <strong>Oops!</strong> {{errors}}
+<div class='col-xs-12 col-xs-offset-0 col-sm-6 col-sm-offset-3 col-md-4 col-md-offset-4'>
+    <form class='panel panel-primary'>
+        <div class="panel-heading">
+            <h1 class="panel-title">Login</h1>
+        </div>
+        <div class="panel-body">
+            <div class="alert alert-danger" role="alert" ng-if="errors">
+                <strong>Oops!</strong> {{errors}}
+            </div>
+            <div class="form-group">
+                <label for="emailAddress">Email Address</label>
+                <input type="email" class='form-control' name="emailAddress" ng-model="emailAddress" />
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" class='form-control' name="password" ng-model="password" />
+            </div>
+            <button class="btn btn-primary btn-lg" ng-click="getToken()">Login</button>
+        </div>
+    </form>
 </div>
-<form>
-    <div class="form-group">
-        <label for="emailAddress">Email Address</label>
-        <input type="email" class='form-control' name="emailAddress" ng-model="emailAddress" />
-    </div>
-    <div class="form-group">
-        <label for="password">Password</label>
-        <input type="password" class='form-control' name="password" ng-model="password" />
-    </div>
-    <button class="btn btn-primary btn-lg" ng-click="getToken()">Login</button>
-</form>
