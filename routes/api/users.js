@@ -73,14 +73,41 @@ router.route('/:id')
             return;
         }
 
-        User.findByIdAndUpdate(request.params.id, request.body, function (error, user) {
-          if (error) {
-              response.status(400).json(error);
-              return;
-          }
-          user.password = undefined;
-          response.status(202).json(user);
+        User.findById(request.params.id, function (error, orig_user) {
+            if (error) {
+                response.status(500).json(error);
+                return;
+            }
+            if (orig_user == null) {
+                response.status(404).json("Not found");
+                return;
+            }
+
+            for (key in request.body) {
+                orig_user[key] = request.body[key];
+            }
+
+            var errors = {};
+            if ( !orig_user.firstName ) { errors.firstName = "No firstName found"; }
+            if ( !orig_user.lastName ) { errors.lastName = "No lastName found"; }
+            if ( !orig_user.emailAddress ) { errors.emailAddress = "No emailAddress found"; }
+            if ( !orig_user.password ) { errors.password = "No password found"; }
+
+            if (Object.keys(errors).length > 0) {
+                response.status(400).json({validationerrors: errors});
+                return;
+            }
+
+            User.findByIdAndUpdate(request.params.id, request.body, function (error, user) {
+                if (error) {
+                    response.status(400).json(error);
+                    return;
+                }
+                user.password = undefined;
+                response.status(202).json(user);
+            });
         });
+
     }) // close put
     .delete(function(request, response) {
 

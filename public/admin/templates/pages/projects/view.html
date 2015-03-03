@@ -1,0 +1,19 @@
+<h1>{{project.title}}</h1>
+<p class="lead">{{project.summary}}</p>
+
+<dl>
+    <dt ng-if="project.url">URL</dt>
+    <dd ng-if="project.url"><a ng-href='{{project.url}}' target='_blank'>{{project.url}}</a></dd>
+    <dt ng-if="project.repo">Repository</dt>
+    <dd ng-if="project.repo"><a ng-href='{{project.repo}}' target='_blank'>{{project.repo}}</a></dd>
+    <dt ng-if="project.category">Category</dt>
+    <dd ng-if="project.category">{{project.category}}</dd>
+</dl>
+
+<div class="btn-group">
+    <a ng-href="#/projects/{{project._id}}/edit" class="btn btn-default">Edit</a>
+</div>
+
+<div class="btn-group">
+    <button class="btn btn-danger" ng-click="removeProject(project)">Remove</button>
+</div>

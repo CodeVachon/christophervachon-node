@@ -73,8 +73,8 @@ describe('Requests to the root path', function() {
 });
 
 describe("API Tests", function() {
-    describe("Authentication Tests", function() { require('./authenticaton'); });
-    describe("Blog Post Tests", function() { require('./posts'); });
-    describe("Projects Tests", function() { require('./projects'); });
-    describe("Users Tests", function() { require('./users'); });
+    describe("Authentication Tests", function() { require('./api/authenticaton'); });
+    describe("Blog Post Tests", function() { require('./api/posts'); });
+    describe("Projects Tests", function() { require('./api/projects'); });
+    describe("Users Tests", function() { require('./api/users'); });
 });

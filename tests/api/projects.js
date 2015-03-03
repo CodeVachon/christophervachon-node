@@ -1,18 +1,18 @@
 process.env['testing'] = true;
 
 var request = require('supertest'),
-    app = require('./../app'),
+    app = require('./../../app'),
     createdBlogData = false,
-    userId = "21dbfc670629ed3b226b8b41",
-    User = require('../models/user'),
+    projectID = "34dbfc670629ed3b226b8b41",
+    Project = require('../../models/project'),
     fs = require('fs'),
-    _authorizedUser = JSON.parse(fs.readFileSync(__dirname + '/_authorizedUser.json', 'utf8')),
-    _unauthorizedUser = JSON.parse(fs.readFileSync(__dirname + '/_unautherizedUser.json', 'utf8'))
+    _authorizedUser = JSON.parse(fs.readFileSync(__dirname + '/../_authorizedUser.json', 'utf8')),
+    _unauthorizedUser = JSON.parse(fs.readFileSync(__dirname + '/../_unautherizedUser.json', 'utf8'))
     _authorizedUserToken = ""
 ;
 
 describe('Expect 401 error with not Token is used', function() {
-    var path = '/api/users'
+    var path = '/api/projects'
     it('fails on GET', function(done) {
         request(app)
             .get(path)
@@ -22,42 +22,43 @@ describe('Expect 401 error with not Token is used', function() {
     it('fails on POST', function(done) {
         request(app)
             .post(path)
-            .send('emailAddress=' + _authorizedUser.emailAddress + '&password=' + _authorizedUser.password)
+            .send('_id='+projectID+'&title=Test+Project&summary=Test+Summary')
             .expect(401)
             .end(done);
     });
     it('fails on GET with ID', function(done) {
         request(app)
-            .get(path + "/" + userId)
+            .get(path + "/" + projectID)
             .expect(401)
             .end(done);
     });
     it('fails on PUT', function(done) {
         request(app)
-            .put(path + "/" + userId)
-            .send('emailAddress=' + _authorizedUser.emailAddress + '&password=' + _authorizedUser.password)
+            .put(path + "/" + projectID)
+            .send('_id='+projectID+'&title=Test+Project&summary=Test+Summary')
             .expect(401)
             .end(done);
     });
     it('fails on DELETE', function(done) {
         request(app)
-            .delete(path + "/" + userId)
+            .delete(path + "/" + projectID)
             .expect(401)
             .end(done);
     });
 });
 
-describe('POST Requests to Users path', function() {
+describe('POST Requests to Projects path With Admin Token', function() {
     before(function(done) {
         // We are going to add in article with a specfic id,
         // lets ensure its not there first.
-        User.findByIdAndRemove(userId, function(err) {
+        Project.findByIdAndRemove(projectID, function(err) {
             if (err) {
                 console.log(err);
             }
             done();
         });
     });
+
     beforeEach(function(done) {
         request(app)
             .post('/api/authenticate')
@@ -71,76 +72,46 @@ describe('POST Requests to Users path', function() {
             });
     });
 
-    var path = '/api/users';
+    var path = '/api/projects';
     it('Returns a 201 status code', function(done) {
         request(app)
             .post(path)
             .set('Authorization', 'Bearer ' + _authorizedUserToken)
-            .send('_id='+userId+'&firstName=Admin&lastName=Strator&emailAddress=admin@local.host&password=test')
+            .send('_id='+projectID+'&title=Test+Project&summary=Test+Summary')
             .expect(201)
             .expect('Content-Type', /json/i)
             .expect(function(res) {
-                if (res.body.firstName != "Admin") { throw new Error("Incorrect firstName Returned"); }
-                if (res.body.lastName != "Strator") { throw new Error("Incorrect lastName Returned"); }
-                if (res.body.emailAddress != "admin@local.host") { throw new Error("Incorrect emailAddress Returned"); }
-                if (res.body.password) { throw new Error("Password should not be sent"); }
+                if (res.body.title != "Test Project") { throw new Error("Incorrect Title Returned"); }
+                if (res.body.summary != "Test Summary") { throw new Error("Incorrect Summary Returned"); }
             })
             .end(done);
     });
 
     describe('Returns a 400 when', function() {
-        it('posting without a firstName', function(done) {
+        it('posting without a Title', function(done) {
             request(app)
                 .post(path)
                 .set('Authorization', 'Bearer ' + _authorizedUserToken)
-                .send('lastName=Strator&emailAddress=admin@local.host&password=test')
+                .send('summary=Test+Summary')
                 .expect(400)
                 .expect('Content-Type', /json/i)
                 .expect(function(res) {
                     if (!res.body.validationerrors) { throw new Error("Expected a Validation Errors"); }
-                    if (!res.body.validationerrors.firstName) { throw new Error("Expected a Validation Error for firstName"); }
+                    if (!res.body.validationerrors.title) { throw new Error("Expected a Validation Error for Title"); }
                 })
                 .end(done);
         });
 
-        it('posting without a lastName', function(done) {
+        it('posting without a Summary', function(done) {
             request(app)
                 .post(path)
                 .set('Authorization', 'Bearer ' + _authorizedUserToken)
-                .send('firstName=Strator&emailAddress=admin@local.host&password=test')
+                .send('title=Test+Project')
                 .expect(400)
                 .expect('Content-Type', /json/i)
                 .expect(function(res) {
                     if (!res.body.validationerrors) { throw new Error("Expected a Validation Errors"); }
-                    if (!res.body.validationerrors.lastName) { throw new Error("Expected a Validation Error for lastName"); }
-                })
-                .end(done);
-        });
-
-        it('posting without a emailAddress', function(done) {
-            request(app)
-                .post(path)
-                .set('Authorization', 'Bearer ' + _authorizedUserToken)
-                .send('firstName=Admin&lastName=Strator&password=test')
-                .expect(400)
-                .expect('Content-Type', /json/i)
-                .expect(function(res) {
-                    if (!res.body.validationerrors) { throw new Error("Expected a Validation Errors"); }
-                    if (!res.body.validationerrors.emailAddress) { throw new Error("Expected a Validation Error for emailAddress"); }
-                })
-                .end(done);
-        });
-
-        it('posting without a password', function(done) {
-            request(app)
-                .post(path)
-                .set('Authorization', 'Bearer ' + _authorizedUserToken)
-                .send('firstName=Admin&lastName=Strator&emailAddress=admin@local.host')
-                .expect(400)
-                .expect('Content-Type', /json/i)
-                .expect(function(res) {
-                    if (!res.body.validationerrors) { throw new Error("Expected a Validation Errors"); }
-                    if (!res.body.validationerrors.password) { throw new Error("Expected a Validation Error for password"); }
+                    if (!res.body.validationerrors.summary) { throw new Error("Expected a Validation Error for Summary"); }
                 })
                 .end(done);
         });
@@ -149,7 +120,8 @@ describe('POST Requests to Users path', function() {
 
 });
 
-describe('POST Requests to Users With unAuthed Token', function() {
+describe('POST Requests to Projects path With nonAdmin Token', function() {
+
     beforeEach(function(done) {
         request(app)
             .post('/api/authenticate')
@@ -162,19 +134,23 @@ describe('POST Requests to Users With unAuthed Token', function() {
                 done();
             });
     });
-    var path = '/api/users';
+
+    var path = '/api/projects';
     it('Returns a 401 status code', function(done) {
         request(app)
             .post(path)
             .set('Authorization', 'Bearer ' + _authorizedUserToken)
-            .send('_id='+userId+'&firstName=Admin&lastName=Strator&emailAddress=admin@local.host&password=test')
+            .send('_id='+projectID+'&title=Test+Project&summary=Test+Summary')
             .expect(401)
             .expect('Content-Type', /json/i)
             .end(done);
     });
+
 });
 
-describe('GET Requests to Users path', function() {
+
+describe('GET Requests to Projects path', function() {
+
     beforeEach(function(done) {
         request(app)
             .post('/api/authenticate')
@@ -187,8 +163,9 @@ describe('GET Requests to Users path', function() {
                 done();
             });
     });
+
     describe('list path', function() {
-        var path = '/api/users';
+        var path = '/api/projects';
         it('Returns a 200 status code', function(done) {
             request(app)
                 .get(path)
@@ -211,14 +188,14 @@ describe('GET Requests to Users path', function() {
                 .set('Authorization', 'Bearer ' + _authorizedUserToken)
                 .expect(function(res) {
                     if (typeof(res.body) == "Array") { throw new Error("Expected an Array"); }
-                    if (res.body[0].password) { throw new Error("Password should not be sent"); }
+                    createdBlogData = res.body[0];
                 })
                 .end(done);
         });
     });
 
     describe('view path', function() {
-        var path = '/api/users/'+userId;
+        var path = '/api/projects/'+projectID;
         it('Returns a 200 status code ['+path+']', function(done) {
             request(app)
                 .get(path)
@@ -241,16 +218,15 @@ describe('GET Requests to Users path', function() {
                 .set('Authorization', 'Bearer ' + _authorizedUserToken)
                 .expect(function(res) {
                     if (typeof(res.body) == "Object") { throw new Error("Expected an Object"); }
-                    if (res.body.password) { throw new Error("Password should not be sent"); }
                 })
                 .end(done);
         });
 
-        it('Returns Admin', function(done) {
+        it('Returns Test Project', function(done) {
             request(app)
                 .get(path)
                 .set('Authorization', 'Bearer ' + _authorizedUserToken)
-                .expect(/Admin/gi)
+                .expect(/Test Project/gi)
                 .end(done);
         });
 
@@ -265,7 +241,9 @@ describe('GET Requests to Users path', function() {
     });
 });
 
-describe('PUT Requests to Users With Authed Token', function() {
+describe('PUT Requests to Projects With Admin Token', function() {
+    var path = '/api/projects/'+projectID;
+
     beforeEach(function(done) {
         request(app)
             .post('/api/authenticate')
@@ -278,24 +256,25 @@ describe('PUT Requests to Users With Authed Token', function() {
                 done();
             });
     });
-    var path = '/api/users/'+userId;
+
     it('Returns a 202 status code', function(done) {
         request(app)
             .put(path)
             .set('Authorization', 'Bearer ' + _authorizedUserToken)
-            .send('lastName=Strator+Renamed')
-            .expect(/Strator\sRenamed/i)
+            .send('title=Test+Project+Renamed')
+            .expect(/Test Project Renamed/i)
             .expect(202)
             .expect('Content-Type', /json/i)
             .expect(function(res) {
-                if (res.body.lastName != "Strator Renamed") { throw new Error("Incorrect LastName Returned"); }
-                if (res.body.password) { throw new Error("Password should not be sent"); }
+                if (res.body.title != "Test Project Renamed") { throw new Error("Incorrect Title Returned"); }
             })
             .end(done);
     });
 });
 
-describe('PUT Requests to Users With unAuthed Token', function() {
+describe('PUT Requests to Projects With nonAdmin Token', function() {
+    var path = '/api/projects/'+projectID;
+
     beforeEach(function(done) {
         request(app)
             .post('/api/authenticate')
@@ -308,19 +287,21 @@ describe('PUT Requests to Users With unAuthed Token', function() {
                 done();
             });
     });
-    var path = '/api/users/'+userId;
+
     it('Returns a 401 status code', function(done) {
         request(app)
             .put(path)
             .set('Authorization', 'Bearer ' + _authorizedUserToken)
-            .send('lastName=Strator+Renamed')
+            .send('title=Test+Project+Renamed')
             .expect(401)
             .expect('Content-Type', /json/i)
             .end(done);
     });
 });
 
-describe('DELETE Requests to Users With unAuthed Token', function() {
+describe('DELETE Requests to Projects with nonAdmin Token', function() {
+    var path = '/api/projects/'+projectID;
+
     beforeEach(function(done) {
         request(app)
             .post('/api/authenticate')
@@ -333,7 +314,6 @@ describe('DELETE Requests to Users With unAuthed Token', function() {
                 done();
             });
     });
-    var path = '/api/users/'+userId;
 
     it('Returns a 401 status code', function(done) {
         request(app)
@@ -344,7 +324,9 @@ describe('DELETE Requests to Users With unAuthed Token', function() {
     });
 });
 
-describe('DELETE Requests to Users With Authed Token', function() {
+describe('DELETE Requests to Projects with Admin Token', function() {
+    var path = '/api/projects/'+projectID;
+
     beforeEach(function(done) {
         request(app)
             .post('/api/authenticate')
@@ -357,7 +339,7 @@ describe('DELETE Requests to Users With Authed Token', function() {
                 done();
             });
     });
-    var path = '/api/users/'+userId;
+
     it('Returns a 204 status code', function(done) {
         request(app)
             .delete(path)
@@ -365,7 +347,7 @@ describe('DELETE Requests to Users With Authed Token', function() {
             .expect(204)
             .end(done);
     });
-    it('User can no longer be found', function(done) {
+    it('Project can no longer be found', function(done) {
         request(app)
             .get(path)
             .set('Authorization', 'Bearer ' + _authorizedUserToken)

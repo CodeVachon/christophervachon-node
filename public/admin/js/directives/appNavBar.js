@@ -8,7 +8,7 @@ function($sce, $window, $location) {
         controller: function($scope) {
             $scope.navItems = [
                 //{ label: "Articles", path: "articles" },
-                //{ label: "Projects", path: "projects" },
+                { label: "Projects", path: "projects" },
                 { label: "Users", path: "users" }
             ];
 

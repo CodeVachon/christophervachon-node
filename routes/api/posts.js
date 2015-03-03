@@ -49,15 +49,15 @@ router.route('/')
 router.route('/:id')
     .get(function(request, response) {
         Article.findById(request.params.id, function (error, post) {
-          if (error) {
-              response.status(500).json(error);
-              return;
-          }
-          if (post == null) {
-              response.status(404).json("Not found");
-              return;
-          }
-          response.status(200).json(post);
+            if (error) {
+                response.status(500).json(error);
+                return;
+            }
+            if (post == null) {
+                response.status(404).json("Not found");
+                return;
+            }
+            response.status(200).json(post);
         });
     }) // close get
     .put(jsonBodyParser, urlencode, function(request, response) {

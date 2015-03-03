@@ -27,6 +27,22 @@ angular.module('Administrator').config(['$routeProvider', function($routeProvide
             templateUrl: './templates/pages/users/edit.html',
             controller: 'UsersEditController'
         })
+        .when('/projects', {
+            templateUrl: './templates/pages/projects/index.html',
+            controller: 'ProjectsIndexController'
+        })
+        .when('/projects/new', {
+            templateUrl: './templates/pages/projects/edit.html',
+            controller: 'ProjectsCreateController'
+        })
+        .when('/projects/:id', {
+            templateUrl: './templates/pages/projects/view.html',
+            controller: 'ProjectsViewController'
+        })
+        .when('/projects/:id/edit', {
+            templateUrl: './templates/pages/projects/edit.html',
+            controller: 'ProjectsEditController'
+        })
         .otherwise({redirectTo: '/'})
     ;
 }]);

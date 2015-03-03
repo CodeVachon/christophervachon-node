@@ -1,0 +1,38 @@
+<h1>{{pageTitle}}</h1>
+<div class="alert alert-danger" ng-if="errors">
+    <strong>Oops!</strong>
+    <ul>
+        <li ng-repeat="error in errors">{{error}}</li>
+    </ul>
+</div>
+<form class="">
+    <input type="hidden" name="_id" ng-model="project._id" ng-if="project._id" />
+    <div class="form-group" ng-class="{'has-error': errors.title }">
+        <label class="control-label" for="title">Title</label>
+        <input type="text" class='form-control' name="title" ng-model="project.title" />
+        <span class="help-block" ng-if="errors.title">{{errors.title}}</span>
+    </div>
+
+    <div class="form-group" ng-class="{'has-error': errors.summary }">
+        <label class="control-label" for="summary">Summary</label>
+        <textarea rows="4" class="form-control" ng-model="project.summary"></textarea>
+        <span class="help-block" ng-if="errors.summary">{{errors.summary}}</span>
+    </div>
+
+    <div class="form-group">
+        <label class="control-label" for="url">URL</label>
+        <input type="text" class='form-control' name="url" ng-model="project.url" />
+    </div>
+
+    <div class="form-group">
+        <label class="control-label" for="repo">Repository</label>
+        <input type="text" class='form-control' name="repo" ng-model="project.repo" />
+    </div>
+
+    <div class="form-group">
+        <label class="control-label" for="category">Category</label>
+        <input type="text" class='form-control' name="category" ng-model="project.category" />
+    </div>
+
+    <button class="btn btn-primary btn-lg" ng-click="saveProject(project)" ng-disabled="updating">{{updating ? 'Saving...' : 'Save'}}</button>
+</form>

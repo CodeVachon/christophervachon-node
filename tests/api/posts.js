@@ -1,12 +1,12 @@
 process.env['testing'] = true;
 
 var request = require('supertest'),
-    app = require('./../app'),
+    app = require('./../../app'),
     createdBlogData = false,
     articleID = "54dbfc670629ed3b226b8b41",
-    Article = require('../models/article'),
+    Article = require('../../models/article'),
     fs = require('fs'),
-    _authorizedUser = JSON.parse(fs.readFileSync(__dirname + '/_authorizedUser.json', 'utf8')),
+    _authorizedUser = JSON.parse(fs.readFileSync(__dirname + '/../_authorizedUser.json', 'utf8')),
     _authorizedUserToken = ""
 ;
 

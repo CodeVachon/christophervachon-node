@@ -63,13 +63,37 @@ router.route('/:id')
             return;
         }
 
-        Project.findByIdAndUpdate(request.params.id, request.body, function (error, post) {
-          if (error) {
-              response.status(400).json(error);
-              return;
-          }
-          response.status(202).json(post);
+        Project.findById(request.params.id, function (error, post_orig) {
+            if (error) {
+                response.status(500).json(error);
+                return;
+            }
+            if (post_orig == null) {
+                response.status(404).json("Not found");
+                return;
+            }
+
+            for (key in request.body) {
+                post_orig[key] = request.body[key];
+            }
+
+            var errors = {};
+            if ( !post_orig.title ) { errors.title = "No title found"; }
+            if ( !post_orig.summary ) { errors.summary = "No summary found"; }
+            if (Object.keys(errors).length > 0) {
+                response.status(400).json({validationerrors: errors});
+                return;
+            }
+
+            Project.findByIdAndUpdate(request.params.id, request.body, function (error, post) {
+                if (error) {
+                    response.status(400).json(error);
+                    return;
+                }
+                response.status(202).json(post);
+            });
         });
+
     }) // close put
     .delete(function(request, response) {
         if (!request.user.isAdmin) {

@@ -1,0 +1,29 @@
+<h1>Projects</h1>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Project Name</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tfoot>
+        <tr>
+            <th colspan="2">
+                <a ng-href="#/projects/new" class="btn btn-success">New</a>
+            </th>
+        </tr>
+    </tfoot>
+    <tbody>
+        <tr ng-repeat="project in projects">
+            <td>{{project.title}}</td>
+            <td>
+                <div class="btn-toolbar pull-right">
+                    <div class='btn-group'>
+                        <a ng-href="#/projects/{{project._id}}" class="btn btn-xs btn-default">view</a>
+                        <a ng-href="#/projects/{{project._id}}/edit" class="btn btn-xs btn-default">edit</a>
+                    </div>
+                </div>
+            </td>
+        </tr>
+    </tbody>
+</table>
