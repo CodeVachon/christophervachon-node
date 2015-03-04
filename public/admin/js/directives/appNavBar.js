@@ -7,7 +7,7 @@ function($sce, $window, $location) {
         templateUrl: './templates/directives/appNavBar.html',
         controller: function($scope) {
             $scope.navItems = [
-                //{ label: "Articles", path: "articles" },
+                { label: "Articles", path: "articles" },
                 { label: "Projects", path: "projects" },
                 { label: "Users", path: "users" }
             ];

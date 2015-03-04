@@ -11,6 +11,8 @@ angular.module('Administrator').config(['$routeProvider', function($routeProvide
             templateUrl: './templates/pages/index/logout.html',
             controller: 'IndexLogoutController'
         })
+
+
         .when('/users', {
             templateUrl: './templates/pages/users/index.html',
             controller: 'UsersIndexController'
@@ -27,6 +29,8 @@ angular.module('Administrator').config(['$routeProvider', function($routeProvide
             templateUrl: './templates/pages/users/edit.html',
             controller: 'UsersEditController'
         })
+
+
         .when('/projects', {
             templateUrl: './templates/pages/projects/index.html',
             controller: 'ProjectsIndexController'
@@ -43,6 +47,26 @@ angular.module('Administrator').config(['$routeProvider', function($routeProvide
             templateUrl: './templates/pages/projects/edit.html',
             controller: 'ProjectsEditController'
         })
+
+
+        .when('/articles', {
+            templateUrl: './templates/pages/articles/index.html',
+            controller: 'ArticlesIndexController'
+        })
+        .when('/articles/new', {
+            templateUrl: './templates/pages/articles/edit.html',
+            controller: 'ArticlesCreateController'
+        })
+        .when('/articles/:id', {
+            templateUrl: './templates/pages/articles/view.html',
+            controller: 'ArticlesViewController'
+        })
+        .when('/articles/:id/edit', {
+            templateUrl: './templates/pages/articles/edit.html',
+            controller: 'ArticlesEditController'
+        })
+
+
         .otherwise({redirectTo: '/'})
     ;
 }]);

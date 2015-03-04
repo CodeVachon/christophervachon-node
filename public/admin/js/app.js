@@ -1,7 +1,11 @@
-angular.module('Administrator', ['ngRoute','ngResource','Gravatar'])
+angular.module('Administrator', ['ngRoute','ngResource','Gravatar','markdown'])
 .config(function($gravatarProvider){
     // Configure the Gravitar Image Size
     $gravatarProvider.setSize(100);
+}).config(function(markdownProvider) {
+    markdownProvider.config({
+        extensions: ['table']
+    });
 }).run(function($rootScope, $location, $window) {
     // To enforce Authentication, Check on Location Change for the Token.
     $rootScope.$on( "$locationChangeStart", function(event, next, current) {
