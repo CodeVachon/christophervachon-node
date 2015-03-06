@@ -3,7 +3,12 @@ angular.module('Administrator')
     function($scope, $routeParams, $location, Articles) {
         $scope.article = {
             title: "",
-            summary: ""
+            summary: "",
+            publish_date: new Date(),
+            author: {
+                name: "Christopher Vachon",
+                email: "code@christophervachon.com"
+            }
         };
         $scope.pageTitle = "Add Article";
 

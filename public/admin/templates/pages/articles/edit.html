@@ -7,41 +7,55 @@
 </div>
 <form class="col-xs-12 col-sm-5 col-md-6">
     <input type="hidden" name="_id" ng-model="article._id" ng-if="article._id" />
-    <div class="form-group" ng-class="{'has-error': errors.title }">
-        <label class="control-label" for="title">Title</label>
-        <input type="text" class='form-control' name="title" ng-model="article.title" />
-        <span class="help-block" ng-if="errors.title">{{errors.title}}</span>
-    </div>
 
-    <div class="form-group" ng-class="{'has-error': errors.summary }">
-        <label class="control-label" for="summary">Summary</label>
-        <textarea rows="4" class="form-control" ng-model="article.summary"></textarea>
-        <span class="help-block" ng-if="errors.summary">{{errors.summary}}</span>
-    </div>
+    <article-tabs ng-transclude>
+        <div class='row'>
+            <ul class="nav nav-tabs">
+                <li ng-class="{ active:tab.isSet(1) }" ng-click="tab.setTab(1)"><a href="">Meta Data</a></li>
+                <li ng-class="{ active:tab.isSet(2) }" ng-click="tab.setTab(2)"><a href="">Body</a></li>
+            </ul>
+            <div class="tab-content">
+                <div class="tab-pane" ng-class="{ active:tab.isSet(1) }">
+                    <div class="form-group" ng-class="{'has-error': errors.title }">
+                        <label class="control-label" for="title">Title</label>
+                        <input type="text" class='form-control' name="title" ng-model="article.title" />
+                        <span class="help-block" ng-if="errors.title">{{errors.title}}</span>
+                    </div>
 
-    <div class="form-group" ng-class="{'has-error': errors.body }">
-        <label class="control-label" for="body">Body</label>
-        <textarea rows="4" class="form-control" ng-model="article.body"></textarea>
-        <span class="help-block" ng-if="errors.body">{{errors.body}}</span>
-    </div>
+                    <div class="form-group" ng-class="{'has-error': errors.summary }">
+                        <label class="control-label" for="summary">Summary</label>
+                        <textarea rows="4" class="form-control" ng-model="article.summary"></textarea>
+                        <span class="help-block" ng-if="errors.summary">{{errors.summary}}</span>
+                    </div>
 
-    <div class="form-group" ng-class="{'has-error': errors.author.name }">
-        <label class="control-label" for="author.name">Author Name</label>
-        <input type="text" class='form-control' name="author.name" ng-model="article.author.name" />
-        <span class="help-block" ng-if="errors.author.name">{{errors.author.name}}</span>
-    </div>
+                    <div class="form-group" ng-class="{'has-error': errors.author.name }">
+                        <label class="control-label" for="author.name">Author Name</label>
+                        <input type="text" class='form-control' name="author.name" ng-model="article.author.name" />
+                        <span class="help-block" ng-if="errors.author.name">{{errors.author.name}}</span>
+                    </div>
 
-    <div class="form-group" ng-class="{'has-error': errors.author.email }">
-        <label class="control-label" for="author.email">Author Email</label>
-        <input type="emailaddress" class='form-control' name="author.email" ng-model="article.author.email" />
-        <span class="help-block" ng-if="errors.author.email">{{errors.author.email}}</span>
-    </div>
+                    <div class="form-group" ng-class="{'has-error': errors.author.email }">
+                        <label class="control-label" for="author.email">Author Email</label>
+                        <input type="emailaddress" class='form-control' name="author.email" ng-model="article.author.email" />
+                        <span class="help-block" ng-if="errors.author.email">{{errors.author.email}}</span>
+                    </div>
 
-    <div class="form-group" ng-class="{'has-error': errors.publish_date }">
-        <label class="control-label" for="publish_date">Publish Date</label>
-        <input type="datetime-local" class='form-control' name="publish_date" ng-model="article.publish_date"/>
-        <span class="help-block" ng-if="errors.publish_date">{{errors.publish_date}}</span>
-    </div>
+                    <div class="form-group" ng-class="{'has-error': errors.publish_date }">
+                        <label class="control-label" for="publish_date">Publish Date</label>
+                        <input type="datetime-local" class='form-control' name="publish_date" ng-model="article.publish_date"/>
+                        <span class="help-block" ng-if="errors.publish_date">{{errors.publish_date}}</span>
+                    </div>
+                </div>
+                <div class="tab-pane" ng-class="{ active:tab.isSet(2) }">
+                    <div class="form-group" ng-class="{'has-error': errors.body }">
+                        <label class="control-label" for="body">Body</label>
+                        <textarea rows="15" class="form-control" ng-model="article.body"></textarea>
+                        <span class="help-block" ng-if="errors.body">{{errors.body}}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </article-tabs>
 
     <button class="btn btn-primary btn-lg" ng-click="saveArticle(article)" ng-disabled="updating">{{updating ? 'Saving...' : 'Save'}}</button>
 </form>
