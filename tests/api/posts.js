@@ -202,7 +202,8 @@ describe('PUT Requests to Posts', function() {
                 }
                 _authorizedUserToken = res.body.token;
                 done();
-            });
+            })
+        ;
     });
 
     it('Returns a 202 status code', function(done) {
@@ -219,7 +220,35 @@ describe('PUT Requests to Posts', function() {
                 if (typeof(res.body.safeurl_history) === "Array") { throw new Error("Expected SafeURL_History to be an Array"); }
                 if (res.body.safeurl_history[0] != "test-article") { throw new Error("Incorrect SafeURL_History[0] Returned -- expected [test-article] got ["+res.body.safeurl_history[0]+"]"); }
             })
-            .end(done);
+            .end(done)
+        ;
+    });
+
+    it('Adds tags as an Array', function(done) {
+        var _tagName1 = "test tag 1";
+        var _tagName2 = "test tag 2";
+        request(app)
+            .put(path)
+            .set('Authorization', 'Bearer ' + _authorizedUserToken)
+            .send('tags='+_tagName1+'&tags='+_tagName2)
+            .expect(202)
+            .expect('Content-Type', /json/i)
+            .expect(function(response) {
+                if (!response.body.tags) {
+                    throw new Error("Expected a property named 'tags'");
+                }
+                if (typeof(response.body.tags) === "Array") {
+                    throw new Error("Expected 'tags' to be an array. Got '"+ typeof(response.body.tags) +"'");
+                }
+                if (response.body.tags[0] !== _tagName1) {
+                    throw new Error("Expected index 0 of 'tags' to be '"+_tagName1+"'. Got '"+response.body.tags[0]+"'");
+                }
+                if (response.body.tags[1] !== _tagName2) {
+                    throw new Error("Expected index 0 of 'tags' to be '"+_tagName2+"'. Got '"+response.body.tags[1]+"'");
+                }
+            })
+            .end(done)
+        ;
     });
 });
 

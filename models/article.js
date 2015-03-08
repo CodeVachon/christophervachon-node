@@ -27,7 +27,7 @@ ArticleSchema.pre('save', function(callback) {
     if (article.isModified('title') || (typeof(article.safeurl) != "String")) {
         if (article.version > 1) {
             if (!typeof(article.safeurl_history) === "Array") { article.safeurl_history = []; }
-            article.safeurl_history.push(new String(article.safeurl));
+            article.safeurl_history.push(new String(article.safeurl).toString());
         }
         article.safeurl = createSafeURL(article.title);
     }

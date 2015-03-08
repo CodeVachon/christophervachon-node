@@ -93,6 +93,6 @@ router.route('/:id')
             response.status(204).json("");
         });
     }) // close delete
-; // close route('/:index')
+; // close route('/:id')
 
 module.exports = router;
