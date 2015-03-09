@@ -72,20 +72,42 @@ app.post('/api/authenticate', jsonBodyParser, urlencode, function (request, resp
     });
 }); // close app.post('/api/authenticate')
 
-var _postsRouter = require('./routes/api/posts');
-app.use('/api/posts', expressJwt({secret: secret}), _postsRouter);
+var _postsAPIRouter = require('./routes/api/posts');
+app.use('/api/posts', expressJwt({secret: secret}), _postsAPIRouter);
 
-var _projectRouter = require('./routes/api/projects');
-app.use('/api/projects', expressJwt({secret: secret}), _projectRouter);
+var _projectAPIRouter = require('./routes/api/projects');
+app.use('/api/projects', expressJwt({secret: secret}), _projectAPIRouter);
 
-var _usersRouter = require('./routes/api/users');
-app.use('/api/users', expressJwt({secret: secret}), _usersRouter);
+var _usersAPIRouter = require('./routes/api/users');
+app.use('/api/users', expressJwt({secret: secret}), _usersAPIRouter);
+
+var _projectsRouter = require('./routes/projects');
+app.use('/projects', _projectsRouter);
+app.use('/page/projects', function(request, response) {
+    response.writeHead(302, {'Location': '/projects'});
+    response.end();
+});
+
+var _projectsRouter = require('./routes/about');
+app.use('/about-me', _projectsRouter);
+app.use('/page/about-me', function(request, response) {
+    response.writeHead(302, {'Location': '/about-me'});
+    response.end();
+});
+
+app.use('*', function(request, response, next) {
+    var _404Error = new Error();
+    _404Error.status = 404;
+    next(_404Error);
+});
 
 // Error Handeler
 app.use(function(err, req, res, next){
 
     if (err.status === 401) {
         res.status(err.status).json(err.message || "Unauthorized Access");
+    } else if (err.status === 404) {
+        res.status(404).render("error404");
     } else if (err.status) {
         console.log(err);
         res.status(err.status).json(err.message || "Unknown Error");

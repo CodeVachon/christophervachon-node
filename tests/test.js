@@ -78,3 +78,9 @@ describe("API Tests", function() {
     describe("Projects Tests", function() { require('./api/projects'); });
     describe("Users Tests", function() { require('./api/users'); });
 });
+
+describe("Front Side Tests", function() {
+    describe("Projects Tests", function() { require('./projects'); });
+    describe("About Me Tests", function() { require('./about'); });
+    describe("404 Errors", function() { require('./error404'); });
+});

@@ -1,0 +1,9 @@
+extends layout
+
+block content
+    h1 Projects
+    
+    each project in projects
+        .project
+            h2:= project.title
+            p:= project.summary
