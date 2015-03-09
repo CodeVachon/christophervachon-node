@@ -45,6 +45,17 @@
                         <input type="datetime-local" class='form-control' name="publish_date" ng-model="article.publish_date"/>
                         <span class="help-block" ng-if="errors.publish_date">{{errors.publish_date}}</span>
                     </div>
+
+                    <div class="form-group" ng-class="{'has-error': errors.tags }">
+                        <label class="control-label" for="tags">Tags</label>
+                        <p>
+                            <span class="label label-info clickable" ng-repeat="tag in article.tags" ng-click="removeTag(tag)">{{tag}}</span>
+                        </p>
+                        <div class="btn-group">
+                            <button class="btn btn-default btn-xs" ng-click="addTag(article)">Add Tag</button>
+                        </div>
+                        <span class="help-block" ng-if="errors.tags">{{errors.tags}}</span>
+                    </div>
                 </div>
                 <div class="tab-pane" ng-class="{ active:tab.isSet(2) }">
                     <div class="form-group" ng-class="{'has-error': errors.body }">

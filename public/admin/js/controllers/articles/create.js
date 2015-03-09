@@ -12,6 +12,23 @@ angular.module('Administrator')
         };
         $scope.pageTitle = "Add Article";
 
+        $scope.addTag = function(article) {
+            if (!$scope.article.tags) { $scope.article.tags = []; }
+            $scope.article.tags.push( prompt("New Tag Name") );
+        }
+
+        $scope.removeTag = function(tag) {
+            if (!$scope.article.tags) { $scope.article.tags = []; }
+            if (confirm("Are you sure you want to remove: " + tag)) {
+                for (var i=0, x=$scope.article.tags.length; i<x; i++) {
+                    if ($scope.article.tags[i] === tag) {
+                        $scope.article.tags.splice(i,1);
+                        return;
+                    }
+                }
+            }
+        }
+        
         $scope.saveArticle = function(article) {
             $scope.errors = null;
             $scope.updating = true;

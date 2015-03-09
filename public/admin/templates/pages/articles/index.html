@@ -2,8 +2,9 @@
 <table class="table">
     <thead>
         <tr>
-            <th>Title</th>
-            <th>Publish Date</th>
+            <th ng-click="setArticleOrder('title')" class='sortable' ng-class="{ 'active': articleOrder == 'title' }">Title <span class="glyphicon pull-right" ng-if="articleOrder == 'title'" ng-class=" articleOrderDir ? 'glyphicon-triangle-bottom' : 'glyphicon-triangle-top' "></span></th>
+            <th ng-click="setArticleOrder('publish_date')" class='sortable' ng-class="{ 'active': articleOrder == 'publish_date' }">Publish Date <span class="glyphicon pull-right" ng-if="articleOrder == 'publish_date'" ng-class=" articleOrderDir ? 'glyphicon-triangle-bottom' : 'glyphicon-triangle-top' "></span></th>
+            <th>Tags</th>
             <th></th>
         </tr>
     </thead>
@@ -15,9 +16,10 @@
         </tr>
     </tfoot>
     <tbody>
-        <tr ng-repeat="article in articles">
+        <tr ng-repeat="article in articles | orderBy : articleOrder : articleOrderDir ">
             <td>{{article.title}}</td>
             <td>{{article.publish_date | date: "longDate" }}</td>
+            <td><span class="label label-info" ng-repeat="tag in article.tags">{{tag}}</span></td>
             <td>
                 <div class="btn-toolbar pull-right">
                     <div class='btn-group'>
