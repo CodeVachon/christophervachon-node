@@ -83,4 +83,5 @@ describe("Front Side Tests", function() {
     describe("Projects Tests", function() { require('./projects'); });
     describe("About Me Tests", function() { require('./about'); });
     describe("404 Errors", function() { require('./error404'); });
+    describe("401 Errors", function() { require('./error401'); });
 });

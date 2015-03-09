@@ -105,15 +105,12 @@ app.use('*', function(request, response, next) {
 app.use(function(err, req, res, next){
 
     if (err.status === 401) {
-        res.status(err.status).json(err.message || "Unauthorized Access");
+        res.status(401).render("error401");
     } else if (err.status === 404) {
         res.status(404).render("error404");
-    } else if (err.status) {
-        console.log(err);
-        res.status(err.status).json(err.message || "Unknown Error");
     } else {
         console.log(err);
-        res.status(500).json("Something Went Horribly Wrong!!!");
+        res.status(500).render("error500");
     }
 
 });
