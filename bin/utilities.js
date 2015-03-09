@@ -6,7 +6,7 @@ function getRandomInt(min, max) {
 exports.generatePassword = function (minLength, maxLength, specialChars) {
     var text = "";
     var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    if (!specialChars) { specialChars = true; }
+    if (typeof(specialChars) == "Undefined") { specialChars = true; }
     if (specialChars) {
         possible += "!@%$";
     }
