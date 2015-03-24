@@ -95,6 +95,9 @@ app.use('/page/about-me', function(request, response) {
     response.end();
 });
 
+var _blogRouter = require('./routes/blog');
+app.use('/blog', _blogRouter);
+
 app.use('*', function(request, response, next) {
     var _404Error = new Error();
     _404Error.status = 404;
@@ -108,6 +111,8 @@ app.use(function(err, req, res, next){
         res.status(401).render("error401");
     } else if (err.status === 404) {
         res.status(404).render("error404");
+    } else if (err.status === 412) {
+        res.status(412).render("error412",{error: err});
     } else {
         console.log(err);
         res.status(500).render("error500");

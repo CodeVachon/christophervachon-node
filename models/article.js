@@ -1,4 +1,5 @@
 var mongoose = require('mongoose');
+var utl = require('./../bin/utilities');
 
 var ArticleSchema = new mongoose.Schema({
     title: String,
@@ -36,9 +37,7 @@ ArticleSchema.pre('save', function(callback) {
 
 
 function createSafeURL(_string) {
-    return _string.replace(/[\W]{1,}/g,"-")
-        .toLowerCase()
-    ;
+    return utl.format_url_text(_string);
 }
 
 

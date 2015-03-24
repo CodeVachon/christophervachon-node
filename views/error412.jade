@@ -1,0 +1,8 @@
+extends layout
+
+block content
+    h1 412
+    if error.message
+        p!= error.message
+    else
+        p Malformed Request
