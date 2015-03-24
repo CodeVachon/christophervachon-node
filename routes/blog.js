@@ -112,6 +112,7 @@ router.route('/:year/:month/:day')
                     response.redirect(302, '/blog/' + request.params.year + "/" + request.params.month + "/"+ request.params.day + "/" + posts[0].safeurl);
                     return;
                 } else {
+                    var error = new Error();
                     error.status = 404;
                     error.message = "Value "+request.params.year+" is not an integer";
                     next(error);
