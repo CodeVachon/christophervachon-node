@@ -33,10 +33,18 @@ router.route('/:year')
                 error.status = 500;
                 next(error);
             } else {
-                response.render('blogList', {
-                    posts: posts,
-                    utl: utl
-                });
+                if (posts.length > 0) {
+                    response.render('blogList', {
+                        posts: posts,
+                        utl: utl
+                    });
+                } else {
+                    var error = new Error();
+                    error.status = 404;
+                    error.message = "Articles Not Found";
+                    next(error);
+                    return;
+                }
             }
         }); // close Posts.find
 
@@ -66,10 +74,18 @@ router.route('/:year/:month')
                 error.status = 500;
                 next(error);
             } else {
-                response.render('blogList', {
-                    posts: posts,
-                    utl: utl
-                });
+                if (posts.length > 0) {
+                    response.render('blogList', {
+                        posts: posts,
+                        utl: utl
+                    });
+                } else {
+                    var error = new Error();
+                    error.status = 404;
+                    error.message = "Articles Not Found";
+                    next(error);
+                    return;
+                }
             }
         }); // close Post.fine
     }) // close .get
@@ -125,7 +141,25 @@ router.route('/:year/:month/:day')
 ;
 router.route('/:year/:month/:day/:title')
     .get(_testDateParams, function(request, response, next) {
-        Posts.findOne({safeurl: request.params.title}, function(error, post) {
+
+        var _startDate = new Date();
+        _startDate.setFullYear(request.params.year);
+        _startDate.setMonth( parseInt(request.params.month)-1 );
+        _startDate.setDate(request.params.day);
+        _startDate.setHours(0);
+        _startDate.setMinutes(0);
+        _startDate.setSeconds(0);
+
+        var _endDate = new Date(_startDate);
+        _endDate.setDate(_endDate.getDate()+1);
+
+        Posts.findOne({
+            "publish_date": {
+                $gt: _startDate,
+                $lt: _endDate
+            },
+            "safeurl": request.params.title
+        }, function(error, post) {
             if (error) {
                 error.status = 500;
                 next(error);
