@@ -11,7 +11,7 @@ var express = require('express'),
     utl = require('./bin/utilities'),
     secret = utl.generatePassword(),
 
-    MongoURL = process.env.MONGO_URL : "mongodb://localhost/"
+    MongoURL = process.env.MONGO_URL || "mongodb://localhost/"
 ;
 
 if (process.env.testing) {  console.log("APPLICATION IS IN TESTING MODE!!!");  }
