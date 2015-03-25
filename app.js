@@ -1,7 +1,7 @@
 var express = require('express'),
     app = express(),
     mongoose = require('mongoose'),
-    dbName = "cmvBlog-" + (process.env.testing?"Testing":"Production"),
+    dbName = "cmvBlog-" + (process.env.testing?"Testing":"production"),
     expressJwt = require('express-jwt'),
     jwt = require('jsonwebtoken'),
     bodyParser = require('body-parser'),
@@ -9,11 +9,13 @@ var express = require('express'),
     jsonBodyParser = bodyParser.json(),
     User = require('./models/user'),
     utl = require('./bin/utilities'),
-    secret = utl.generatePassword()
+    secret = utl.generatePassword(),
+
+    MongoURL = process.env.MONGO_URL : "mongodb://localhost/"
 ;
 
 if (process.env.testing) {  console.log("APPLICATION IS IN TESTING MODE!!!");  }
-mongoose.connect('mongodb://localhost/'+dbName, function(error) {
+mongoose.connect(MongoURL+dbName, function(error) {
     if(error) {
         console.log('mongodb connection error', error);
     } else if (process.env.testing) {
