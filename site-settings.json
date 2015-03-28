@@ -1,0 +1,15 @@
+{
+    "title":"Christopher Vachon",
+    "defaults": {
+        "description":"",
+        "keywords":[],
+        "OGImage":""
+    },
+    "cssFiles": ["/includes/css/cmv-express.min.css"],
+    "jsFiles": ["//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"],
+    "icoFiles": ["/includes/favicon.ico"],
+    "googleAnalytics": {
+        "UACode": "---UA-47031068-2",
+        "UADomain": "---christophervachon.com"
+    }
+}

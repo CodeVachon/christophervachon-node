@@ -1,10 +1,33 @@
 doctype
 html
     head
-        block title
-            title Node Site of Christopher Vachon
-        link(rel="stylesheet", href='/includes/css/cmv-express.min.css')
+        if pageTitle
+            title !{pageTitle} | !{settings.title}
+        else 
+            title !{settings.title}
         meta(name="viewport",content="width=device-width, initial-scale=1")
+        meta(name="description", content= pageDescription || settings.defaultDescription)
+        meta(name="keywords", content= pageKeywords || settings.defaultKeywords)
+        meta(name="viewport",content="width=device-width, initial-scale=1")
+        meta(property="og:title", content= pageTitle || settings.title )
+        meta(property="og:description", content= pageDescription || settings.defaultDescription )
+        meta(property="og:type", content="website")
+        meta(property="og:image", content= pageImage || settings.defaultOGImage)
+        meta(property="og:site_name", content= settings.title )
+        meta(property="og:url", content= request.canonical )
+        meta(property="canonical", href= request.canonical )
+        
+        each icoPath in settings.icoFiles
+            link(rel="icon", type="image/png", href= icoPath )
+        each cssPath in settings.cssFiles
+            link(rel="stylesheet", href= cssPath )
+                
+        if settings.googleAnalytics
+            script.
+                (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+                ga('create', '#{settings.googleAnalytics.UACode}', '#{settings.googleAnalytics.UADomain}');
+                ga('send', 'pageview');
+
     body
         block content
             h1 Oops! No content...
@@ -15,3 +38,5 @@ html
                 li: a(href="/blog") Blog
                 li: a(href="/about-me") About Me
                 li: a(href="/projects") Projects
+        each jsPath in settings.jsFiles
+            script(src=jsPath)

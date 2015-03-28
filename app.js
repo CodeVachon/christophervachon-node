@@ -1,7 +1,6 @@
 var express = require('express'),
     app = express(),
     mongoose = require('mongoose'),
-    dbName = "cmvBlog-" + (process.env.testing?"Testing":"production"),
     expressJwt = require('express-jwt'),
     jwt = require('jsonwebtoken'),
     bodyParser = require('body-parser'),
@@ -11,7 +10,11 @@ var express = require('express'),
     utl = require('./bin/utilities'),
     secret = utl.generatePassword(),
 
-    MongoURL = process.env.MONGO_URL || "mongodb://localhost/"+dbName
+    dbName = "cmvBlog-" + (process.env.testing?"Testing":"Production"),
+    MongoURL = process.env.MONGO_URL || "mongodb://localhost/"+dbName,
+
+    fs = require('fs'),
+    _siteSettings = {defaults: {keywords:[]}}
 ;
 
 if (process.env.testing) {  console.log("APPLICATION IS IN TESTING MODE!!!");  }
@@ -22,6 +25,49 @@ mongoose.connect(MongoURL, function(error) {
         console.log('mongodb connection ['+dbName+'] successful');
     }
 });
+
+
+/*  Set Site Settings  */
+// These are avaliable in views in the `settings` scope
+if (fs.existsSync(__dirname + '/site-settings.json')) {
+    var _siteSettings = JSON.parse(fs.readFileSync(__dirname + '/site-settings.json', 'utf8')) || {}
+}
+
+app.set("title", _siteSettings.title || "No Title Set");
+app.set("cssFiles", _siteSettings.cssFiles || [])
+app.set("icoFiles", _siteSettings.icoFiles || [])
+app.set("jsFiles", _siteSettings.jsFiles || [])
+app.set("defaultDescription", _siteSettings.defaults.description || "" );
+app.set("defaultKeywords",  _siteSettings.defaults.keywords.join(",") || "" );
+app.set("defaultOGImage",  _siteSettings.defaults.OGImage || "" );
+app.set("googleAnalytics",  _siteSettings.googleAnalytics || "" );
+
+// This Creates a Request Scope that can be used inside of the Jade Views
+app.use(function(request, response, next) {
+	var _hostPath = "";
+	var _canonical = [];
+	_canonical.push(request.protocol + "://");
+	if (request.subdomains.length > 0) {
+		_canonical.push(request.subdomains.join(".") + ".");
+	}
+	_canonical.push(request.hostname);
+	_hostPath = _canonical.join("").toLowerCase();
+	_canonical.push(request.originalUrl);
+
+	response.locals.request = {
+		path: request.path,
+		protocol: request.protocol,
+		query: request.query,
+		originalUrl: request.originalUrl,
+		hostname: request.hostname,
+		host: _hostPath,
+		subdomains: request.subdomains.join("."),
+		canonical: _canonical.join("").toLowerCase()
+	};
+	next();
+});
+
+
 
 app.set('view engine', 'jade');
 app.use(express.static(__dirname + '/public'));
