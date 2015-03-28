@@ -1,7 +1,7 @@
 var express = require('express'),
     app = express(),
     mongoose = require('mongoose'),
-    dbName = "cmvBlog-" + (process.env.testing?"Testing":"Production-production"),
+    dbName = "cmvBlog-" + (process.env.testing?"Testing":"production"),
     expressJwt = require('express-jwt'),
     jwt = require('jsonwebtoken'),
     bodyParser = require('body-parser'),
