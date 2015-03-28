@@ -11,11 +11,11 @@ var express = require('express'),
     utl = require('./bin/utilities'),
     secret = utl.generatePassword(),
 
-    MongoURL = process.env.MONGO_URL || "mongodb://localhost/"
+    MongoURL = process.env.MONGO_URL || "mongodb://localhost/"+dbName
 ;
 
 if (process.env.testing) {  console.log("APPLICATION IS IN TESTING MODE!!!");  }
-mongoose.connect(MongoURL+dbName, function(error) {
+mongoose.connect(MongoURL, function(error) {
     if(error) {
         console.log('mongodb connection error', error);
     } else if (process.env.testing) {
