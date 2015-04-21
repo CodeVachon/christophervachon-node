@@ -4,7 +4,7 @@ angular.module('Administrator', ['ngRoute','ngResource','Gravatar','markdown'])
     $gravatarProvider.setSize(100);
 }).config(function(markdownProvider) {
     markdownProvider.config({
-        extensions: ['table']
+        extensions: ['table','gist']
     });
 }).run(function($rootScope, $location, $window) {
     // To enforce Authentication, Check on Location Change for the Token.
