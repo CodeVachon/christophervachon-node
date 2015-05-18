@@ -2,14 +2,15 @@ extends layout
 
 block content
     h1 Blog
-    
-    if posts.length
-        each post in posts
-            - var _url = "/blog/"+utl.prettyDate(post.publish_date,"yyyy/mm/dd")+"/"+utl.format_url_text(post.title)
-            article
-                header
-                    a(href=_url ).lead!= post.title
-                    p Posted: !{ utl.prettyDate(post.publish_date,"mmmm d, yyyy") }
-                p:= post.summary
-    else
-        p No Posts Found
+    .article-list
+        if posts.length
+            each post in posts
+                - var _url = "/blog/"+utl.prettyDate(post.publish_date,"yyyy/mm/dd")+"/"+utl.format_url_text(post.title)
+                article
+                    header
+                        a(href= _url ).lead!= post.title
+                        p.meta Posted: !{ utl.prettyDate(post.publish_date,"mmmm d, yyyy") }
+                    p:= post.summary
+        else
+            p No Posts Found
+    include _paging

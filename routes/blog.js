@@ -4,16 +4,23 @@ var express = require('express'),
     utl = require("./../bin/utilities"),
     // Use the same MarkDown as the Admin Editor...
     Showdown = require("./../public/admin/js/vendor/showdown"),
-    converter = new Showdown.converter({ extensions: ['table','github'] })
+    converter = new Showdown.converter({ extensions: ['table','github','gist'] }),
+    itemsPerPage = 5;
 ;
 
 router.route('/')
     .get(function(request, response) {
-        Posts.find(null, null, {sort: {publish_date: -1}},function (errors, posts) {
-            response.render('blogList', {
-                posts: posts,
-                utl: utl
-            });
+
+        var pageNo = request.query.page || 1;
+
+        Posts.find(null, null, {limit: itemsPerPage, skip: (pageNo-1)*itemsPerPage, sort: {publish_date: -1}},function (errors, posts) {
+            Posts.count({}, function(error, count) {
+                response.render('blogList', {
+                    posts: posts,
+                    utl: utl,
+                    paging: _pagingVariables(count, itemsPerPage, pageNo)
+                });
+            }); // close Posts.count
         }); // close Posts.find
     }) // close get
 ;
@@ -22,22 +29,29 @@ router.route('/:year')
 
         var _startDate = new Date('Jan 1 ' + request.params.year + ' 00:00:00');
         var _endDate = new Date('Dec 31 ' + request.params.year + ' 23:59:59');
+        var pageNo = request.query.page || 1;
 
         Posts.find({
             "publish_date": {
                 $gt: _startDate,
                 $lt: _endDate
             }
-        }, null, {sort: {publish_date: -1}}, function(error, posts) {
+        }, null, {limit: itemsPerPage, skip: (pageNo-1)*itemsPerPage, sort: {publish_date: -1}}, function(error, posts) {
             if (error) {
                 error.status = 500;
                 next(error);
             } else {
                 if (posts.length > 0) {
-                    response.render('blogList', {
-                        posts: posts,
-                        utl: utl
-                    });
+                    Posts.count({"publish_date": {
+                        $gt: _startDate,
+                        $lt: _endDate
+                    }}, function(error, count) {
+                        response.render('blogList', {
+                            posts: posts,
+                            utl: utl,
+                            paging: _pagingVariables(count, itemsPerPage, pageNo)
+                        });
+                    }); // close Posts.count
                 } else {
                     var error = new Error();
                     error.status = 404;
@@ -64,21 +78,29 @@ router.route('/:year/:month')
         var _endDate = new Date(_startDate);
         _endDate.setMonth(_endDate.getMonth()+1);
 
+        var pageNo = request.query.page || 1;
+
         Posts.find({
             "publish_date": {
                 $gt: _startDate,
                 $lt: _endDate
             }
-        }, null, {sort: {publish_date: -1}}, function(error, posts) {
+        }, null, {limit: itemsPerPage, skip: (pageNo-1)*itemsPerPage, sort: {publish_date: -1}}, function(error, posts) {
             if (error) {
                 error.status = 500;
                 next(error);
             } else {
                 if (posts.length > 0) {
-                    response.render('blogList', {
-                        posts: posts,
-                        utl: utl
-                    });
+                    Posts.count({"publish_date": {
+                        $gt: _startDate,
+                        $lt: _endDate
+                    }}, function(error, count) {
+                        response.render('blogList', {
+                            posts: posts,
+                            utl: utl,
+                            paging: _pagingVariables(count, itemsPerPage, pageNo)
+                        });
+                    }); // close Posts.count
                 } else {
                     var error = new Error();
                     error.status = 404;
@@ -103,12 +125,14 @@ router.route('/:year/:month/:day')
         var _endDate = new Date(_startDate);
         _endDate.setDate(_endDate.getDate()+1);
 
+        var pageNo = request.query.page || 1;
+
         Posts.find({
             "publish_date": {
                 $gt: _startDate,
                 $lt: _endDate
             }
-        }, null, {sort: {publish_date: -1}}, function(error, posts) {
+        }, null, {limit: itemsPerPage, skip: (pageNo-1)*itemsPerPage, sort: {publish_date: -1}}, function(error, posts) {
 
             if (error) {
                 console.log(error);
@@ -118,10 +142,16 @@ router.route('/:year/:month/:day')
             } else {
 
                 if (posts.length > 1) {
-                    response.render('blogList', {
-                        posts: posts,
-                        utl: utl
-                    });
+                    Posts.count({"publish_date": {
+                        $gt: _startDate,
+                        $lt: _endDate
+                    }}, function(error, count) {
+                        response.render('blogList', {
+                            posts: posts,
+                            utl: utl,
+                            paging: _pagingVariables(count, itemsPerPage, pageNo)
+                        });
+                    }); // close Posts.count
                     return;
                 } else if (posts.length === 1) {
                     // 302 [temporary] redirect to the single blog. because there might be another post one day...
@@ -167,7 +197,7 @@ router.route('/:year/:month/:day/:title')
                 if (post) {
                     response.render('blogView', {
                         post: post,
-                        postBody: converter.makeHtml(post.body),
+                        postBody: converter.makeHtml(post.body).replace(/\<img src/gi,"<img class='img-responsive' src"),
                         utl: utl
                     });
                 } else {
@@ -181,6 +211,31 @@ router.route('/:year/:month/:day/:title')
         }); // close Posts.findOne
     }) // close .get
 ;
+
+function _pagingVariables(totalCount, itemsPerPage, pageNo) {
+    var _padding = 3;
+    var _totalPages = Math.ceil(totalCount / itemsPerPage);
+    var _prevPageNo = ((pageNo>1)?parseInt(pageNo)-1:1);
+    var _nextPageNo = ((pageNo<_totalPages)?parseInt(pageNo)+1:_totalPages);
+    var _startingPageNo = parseInt(pageNo)-_padding;
+    if (_startingPageNo < 1) { _startingPageNo = 1; }
+    var _endingPageNo = _startingPageNo+(_padding*2);
+    if (_endingPageNo > _totalPages) {
+        _endingPageNo = _totalPages;
+        _startingPageNo = _endingPageNo-(_padding*2);
+        if (_startingPageNo < 1) { _startingPageNo = 1; }
+    }
+
+    return {
+        prevPageNo: _prevPageNo,
+        nextPageNo: _nextPageNo,
+        currentPageNo: pageNo,
+        maxPageNo: _totalPages,
+        itemsPerPage: itemsPerPage,
+        startingPageNo: _startingPageNo,
+        endingPageNo: _endingPageNo
+    };
+} // close _pagingVariables
 
 function _testDateParams(request, response, next) {
     var error = new Error();

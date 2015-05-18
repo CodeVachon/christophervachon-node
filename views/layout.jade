@@ -6,9 +6,10 @@ html
         else 
             title !{settings.title}
         meta(name="viewport",content="width=device-width, initial-scale=1")
+        meta(charset="utf-8")
+        meta(http-equiv="X-UA-Compatible", content="IE=edge")
         meta(name="description", content= pageDescription || settings.defaultDescription)
         meta(name="keywords", content= pageKeywords || settings.defaultKeywords)
-        meta(name="viewport",content="width=device-width, initial-scale=1")
         meta(property="og:title", content= pageTitle || settings.title )
         meta(property="og:description", content= pageDescription || settings.defaultDescription )
         meta(property="og:type", content="website")
@@ -29,14 +30,30 @@ html
                 ga('send', 'pageview');
 
     body
-        block content
-            h1 Oops! No content...
-            
-        footer
-            ul
-                li: a(href="/") Home
-                li: a(href="/blog") Blog
-                li: a(href="/about-me") About Me
-                li: a(href="/projects") Projects
+        .container-fluid
+            .row
+                header.masthead.col-sm-3.col-xs-12
+                    .brand.col-xs-3.col-xs-push-9.col-sm-12.col-sm-push-0
+                        img(src='/includes/imgs/me2-300.jpg', alt='Picture of Christopher Vachon').img-responsive
+                    .desc.col-xs-9.col-xs-pull-3.col-sm-12.col-sm-pull-0
+                        p.lead Christopher Vachon
+                        p.sub Web Developer, Musician, and Beer Enthusiast
+                .content.col-sm-9.col-xs-12
+                    .col-xs-12
+                        block content
+                            h1 Oops! No content...
+                .sidebar.col-sm-3.col-xs-12
+                    ul.navigation
+                        li: a(href="/") Home
+                        li: a(href="/blog") Blog
+                        li: a(href="/about-me") About Me
+                        li: a(href="/projects") Projects
+                    aside.advert
+                        a(href="http://mbsy.co/CodeSchool/18363039")
+                            img(src="https://ambassador-api.s3.amazonaws.com/uploads/marketing/970/2014_09_22_13_35_20.gif", alt="Join Code School").img-responsive
+            footer.row.site-footer
+                .col-xs-12
+                    p &copy; Christopher Vachon #{ new Date().getFullYear() }
+                    p <strong>Discliamer</strong>: the views and opinions expressed on this site a solely my own and do not nessacarily reflect those of any person, company, or organization mentioned on this site.
         each jsPath in settings.jsFiles
             script(src=jsPath)

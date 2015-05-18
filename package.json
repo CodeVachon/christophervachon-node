@@ -30,11 +30,17 @@
     "simply-deferred": "^3.0.0"
   },
   "devDependencies": {
+    "grunt": "^0.4.5",
+    "grunt-contrib-coffee": "^0.13.0",
+    "grunt-contrib-cssmin": "^0.12.2",
+    "grunt-contrib-less": "^1.0.0",
+    "grunt-contrib-uglify": "^0.8.0",
+    "grunt-contrib-watch": "^0.6.1",
     "it-each": "^0.3.0",
     "mocha": "^2.1.0",
     "supertest": "^0.15.0"
-    },
-    "engines": {
-      "node": "0.10.x"
-    }
+  },
+  "engines": {
+    "node": "0.10.x"
+  }
 }

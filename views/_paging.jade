@@ -1,0 +1,15 @@
+if paging
+    nav
+        ul.pagination.pagination-sm
+            li
+                a(href="?page=" + paging.prevPageNo) &laquo;
+            - for (var i = paging.startingPageNo; i <= paging.endingPageNo; i++) {
+                if paging.currentPageNo == i
+                    li.active
+                        a(href="?page=" + i)= i
+                else
+                    li
+                        a(href="?page=" + i)= i
+            - }
+            li
+                a(href="?page=" + paging.nextPageNo) &raquo;
