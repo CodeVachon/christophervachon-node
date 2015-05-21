@@ -1,7 +1,7 @@
 extends layout
 
 block content
-    h1 Blog
+    h1 #{ pageTitle || "Blog Posts" }
     .article-list
         if posts.length
             each post in posts

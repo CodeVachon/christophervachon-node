@@ -3627,8 +3627,13 @@ a.thumbnail.active {
     font-size: 1.2em;
   }
 }
+.content article header {
+  border-bottom: 1px #999 solid;
+  margin-bottom: 1em;
+}
 .content article header .meta {
-  font-size: 0.8em;
+  font-size: 0.7em;
+  color: #999;
 }
 .content article .label {
   margin-right: 0.5em;
@@ -3639,6 +3644,9 @@ a.thumbnail.active {
   margin-bottom: 1em;
   padding-top: 1em;
   padding-bottom: 1em;
+}
+.content .article-list article header {
+  border-bottom: none;
 }
 .sidebar {
   clear: left;

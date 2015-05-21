@@ -5,7 +5,8 @@ var express = require('express'),
     // Use the same MarkDown as the Admin Editor...
     Showdown = require("./../public/admin/js/vendor/showdown"),
     converter = new Showdown.converter({ extensions: ['table','github','gist'] }),
-    itemsPerPage = 5;
+    itemsPerPage = 5,
+    months = ["January","February","March","April","May","June","July","August","September","October","November","December"]
 ;
 
 router.route('/')
@@ -18,7 +19,9 @@ router.route('/')
                 response.render('blogList', {
                     posts: posts,
                     utl: utl,
-                    paging: _pagingVariables(count, itemsPerPage, pageNo)
+                    paging: _pagingVariables(count, itemsPerPage, pageNo),
+                    pageTitle: "Blog Posts",
+                    pageDescription: "List of all blog posts"
                 });
             }); // close Posts.count
         }); // close Posts.find
@@ -49,7 +52,9 @@ router.route('/:year')
                         response.render('blogList', {
                             posts: posts,
                             utl: utl,
-                            paging: _pagingVariables(count, itemsPerPage, pageNo)
+                            paging: _pagingVariables(count, itemsPerPage, pageNo),
+                            pageTitle: "Blog Posts " + _startDate.getFullYear(),
+                            pageDescription: "List of all blog posts for "  + _startDate.getFullYear()
                         });
                     }); // close Posts.count
                 } else {
@@ -98,7 +103,9 @@ router.route('/:year/:month')
                         response.render('blogList', {
                             posts: posts,
                             utl: utl,
-                            paging: _pagingVariables(count, itemsPerPage, pageNo)
+                            paging: _pagingVariables(count, itemsPerPage, pageNo),
+                            pageTitle: "Blog Posts " + months[_startDate.getMonth()] + " " + _startDate.getFullYear(),
+                            pageDescription: "List of blog posts for " + months[_startDate.getMonth()] + " " + _startDate.getFullYear()
                         });
                     }); // close Posts.count
                 } else {
@@ -149,7 +156,9 @@ router.route('/:year/:month/:day')
                         response.render('blogList', {
                             posts: posts,
                             utl: utl,
-                            paging: _pagingVariables(count, itemsPerPage, pageNo)
+                            paging: _pagingVariables(count, itemsPerPage, pageNo),
+                            pageTitle: "Blog Posts " + months[_startDate.getMonth()] + " " + _startDate.getDate() + " "+ _startDate.getFullYear(),
+                            pageDescription: "List of blog posts for " + months[_startDate.getMonth()] + " " + _startDate.getDate() + " "+ _startDate.getFullYear()
                         });
                     }); // close Posts.count
                     return;
@@ -198,7 +207,9 @@ router.route('/:year/:month/:day/:title')
                     response.render('blogView', {
                         post: post,
                         postBody: converter.makeHtml(post.body).replace(/\<img src/gi,"<img class='img-responsive' src"),
-                        utl: utl
+                        utl: utl,
+                        pageTitle: post.title,
+                        pageDescription: post.summary
                     });
                 } else {
                     var error = new Error();

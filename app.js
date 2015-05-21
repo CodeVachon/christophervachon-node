@@ -136,8 +136,8 @@ app.use('/page/projects', function(request, response) {
     response.end();
 });
 
-var _projectsRouter = require('./routes/about');
-app.use('/about-me', _projectsRouter);
+var aboutRouter = require('./routes/about');
+app.use('/about-me', aboutRouter);
 app.use('/page/about-me', function(request, response) {
     response.writeHead(302, {'Location': '/about-me'});
     response.end();
