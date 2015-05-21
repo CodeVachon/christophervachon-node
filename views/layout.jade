@@ -13,10 +13,17 @@ html
         meta(property="og:title", content= pageTitle || settings.title )
         meta(property="og:description", content= pageDescription || settings.defaultDescription )
         meta(property="og:type", content="website")
-        meta(property="og:image", content= pageImage || settings.defaultOGImage)
+        meta(property="og:image", content= pageImage || request.OGImage || settings.defaultOGImage )
         meta(property="og:site_name", content= settings.title )
         meta(property="og:url", content= request.canonical )
         meta(property="canonical", href= request.canonical )
+
+        meta(name="twitter:card", content="summary")
+        meta(name="twitter:site", content="@liaodrake")
+        meta(name="twitter:creator", content="@liaodrake")
+        meta(name="twitter:title", content= pageTitle || settings.title )
+        meta(name="twitter:description", content= pageDescription || settings.defaultDescription )
+        meta(name="twitter:image:src", content= pageImage || request.OGImage || settings.defaultOGImage )
         
         each icoPath in settings.icoFiles
             link(rel="icon", type="image/png", href= icoPath )

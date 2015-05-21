@@ -62,7 +62,8 @@ app.use(function(request, response, next) {
 		hostname: request.hostname,
 		host: _hostPath,
 		subdomains: request.subdomains.join("."),
-		canonical: _canonical.join("").toLowerCase()
+		canonical: _canonical.join("").toLowerCase(),
+        OGImage: _hostPath + _siteSettings.defaults.OGImage
 	};
 	next();
 });
