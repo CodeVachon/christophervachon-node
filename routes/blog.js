@@ -13,8 +13,13 @@ router.route('/')
     .get(function(request, response) {
 
         var pageNo = request.query.page || 1;
+        var _endDate = new Date();
 
-        Posts.find(null, null, {limit: itemsPerPage, skip: (pageNo-1)*itemsPerPage, sort: {publish_date: -1}},function (errors, posts) {
+        Posts.find({
+            "publish_date": {
+                $lt: _endDate
+            }
+        }, null, {limit: itemsPerPage, skip: (pageNo-1)*itemsPerPage, sort: {publish_date: -1}},function (errors, posts) {
             Posts.count({}, function(error, count) {
                 response.render('blogList', {
                     posts: posts,
@@ -32,6 +37,12 @@ router.route('/:year')
 
         var _startDate = new Date('Jan 1 ' + request.params.year + ' 00:00:00');
         var _endDate = new Date('Dec 31 ' + request.params.year + ' 23:59:59');
+
+        var _now = new Date();
+        if (_endDate > _now) {
+            _endDate = _now;
+        }
+        
         var pageNo = request.query.page || 1;
 
         Posts.find({
@@ -83,6 +94,11 @@ router.route('/:year/:month')
         var _endDate = new Date(_startDate);
         _endDate.setMonth(_endDate.getMonth()+1);
 
+        var _now = new Date();
+        if (_endDate > _now) {
+            _endDate = _now;
+        }
+
         var pageNo = request.query.page || 1;
 
         Posts.find({
@@ -131,6 +147,11 @@ router.route('/:year/:month/:day')
 
         var _endDate = new Date(_startDate);
         _endDate.setDate(_endDate.getDate()+1);
+
+        var _now = new Date();
+        if (_endDate > _now) {
+            _endDate = _now;
+        }
 
         var pageNo = request.query.page || 1;
 
