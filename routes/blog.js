@@ -20,7 +20,11 @@ router.route('/')
                 $lt: _endDate
             }
         }, null, {limit: itemsPerPage, skip: (pageNo-1)*itemsPerPage, sort: {publish_date: -1}},function (errors, posts) {
-            Posts.count({}, function(error, count) {
+            Posts.count({
+                "publish_date": {
+                    $lt: _endDate
+                }
+            }, function(error, count) {
                 response.render('blogList', {
                     posts: posts,
                     utl: utl,
@@ -30,6 +34,43 @@ router.route('/')
                 });
             }); // close Posts.count
         }); // close Posts.find
+    }) // close get
+;
+router.route('/tags/:tagname')
+    .get(function(request, response, next) {
+        var pageNo = request.query.page || 1;
+        var _endDate = new Date();
+
+        Posts.find({
+            "publish_date": {
+                $lt: _endDate
+            },
+            tags: request.params.tagname
+        }, null, {limit: itemsPerPage, skip: (pageNo-1)*itemsPerPage, sort: {publish_date: -1}}, function (errors, posts) {
+            if (posts.length) {
+                Posts.count({
+                    "publish_date": {
+                        $lt: _endDate
+                    },
+                    tags: request.params.tagname
+                }, function(error, count) {
+                    response.render('blogList', {
+                        posts: posts,
+                        utl: utl,
+                        paging: _pagingVariables(count, itemsPerPage, pageNo),
+                        pageTitle: " Blog Posts - Tag: " + request.params.tagname,
+                        pageDescription: "List of all blog posts"
+                    });
+                }); // close Posts.count
+            } else {
+                var error = new Error();
+                error.status = 404;
+                error.message = "No Articles Found Matching " + request.params.tagname;
+                next(error);
+                return;
+            }
+        }); // close Posts.find
+
     }) // close get
 ;
 router.route('/:year')
@@ -42,7 +83,7 @@ router.route('/:year')
         if (_endDate > _now) {
             _endDate = _now;
         }
-        
+
         var pageNo = request.query.page || 1;
 
         Posts.find({

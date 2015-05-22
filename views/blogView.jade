@@ -9,4 +9,4 @@ block content
         if post.tags
             aside
                 for tag in post.tags
-                    span.label.label-info!= tag
+                    a(href="/blog/tags/" + tag).label.label-info!= tag
