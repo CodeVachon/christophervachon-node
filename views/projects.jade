@@ -2,8 +2,18 @@ extends layout
 
 block content
     h1 Projects
+
+    p There are several online projects that I have on the go. here is a short list of things open to the public.
     
     each project in projects
         .project
             h2:= project.title
             p:= project.summary
+            if project.url || project.repo
+                dl
+                    if project.url
+                        dt URL
+                        dd: a(href=project.url):= project.url
+                    if project.repo
+                        dt Repository
+                        dd: a(href=project.repo):= project.repo

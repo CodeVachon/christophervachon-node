@@ -51,6 +51,9 @@
 
 @import url(http://fonts.googleapis.com/css?family=PT+Serif:400,700,400italic,700italic);
 
+@import "articles.less";
+@import "projects.less";
+
 .masthead {
     @media (max-width: @screen-xs-max) {
         .lead {
@@ -92,31 +95,6 @@
         margin-bottom: 2em;
         .lead {
             font-size: 1.2em;
-        }
-    }
-    article {
-        header {
-            .meta {
-                font-size: 0.7em;
-                color: #999;
-            }
-            border-bottom: 1px #999 solid;
-            margin-bottom: 1em;
-        }
-        .label {
-            margin-right: 0.5em;
-        }
-    }
-    .article-list {
-        article {
-            header {
-                border-bottom: none;
-            }
-            border-bottom: 1px #999 solid;
-            margin-top: 1em;
-            margin-bottom: 1em;
-            padding-top: 1em;
-            padding-bottom: 1em;
         }
     }
 }
