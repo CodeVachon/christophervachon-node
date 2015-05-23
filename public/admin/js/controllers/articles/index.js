@@ -24,9 +24,19 @@ angular.module('Administrator')
             return ($scope.articleOrder == value);
         }
         $scope.pageNo = 1;
-        $scope.pageSize = 5;
+        $scope.pageSize = 10;
         $scope.numberOfPages=function(){
             return Math.ceil($scope.articles.length/$scope.pageSize);                
+        }
+        $scope.nextPage=function() {
+            if ($scope.pageNo < $scope.numberOfPages()) {
+                $scope.pageNo=$scope.pageNo+1;
+            }
+        }
+        $scope.prevPage=function() {
+            if ($scope.pageNo > 1) {
+                $scope.pageNo=$scope.pageNo-1;
+            }
         }
     }
 ]).filter('startFrom', function() {
