@@ -1,5 +1,47 @@
 extends layout
 
+mixin feedItem(title, subtitle, body, url, imgsrc)
+    .media
+        .media-left
+            a(href=url)
+                img(src=imgsrc, alt=title).media-object.img-rounded
+        .media-body
+            .media-heading
+                 a(href=url).lead!= title
+                 p.sub.text-muted!= subtitle
+            .media-body !{ converter.makeHtml(body).replace(/(https?:\/\/[a-z0-9\/\._-]+[a-z0-9\/])/gi,"<a href='$1'>$1</a>") }
+
+mixin tweet(data)
+    small.text-muted Tweet
+    +feedItem("@" + data.user.screen_name, utl.prettyDate(data.created_at,"mmmm d, yyyy"), data.text, "https://twitter.com/" + data.user.screen_name, data.user.profile_image_url)
+    if data.entities.media
+        for media in data.entities.media
+            a(href=media.url)
+                img(src=media.media_url_https, alt="tweeted photo").img-responsive
+mixin article(data)
+    - var _url = "/blog/"+utl.prettyDate(data.publish_date,"yyyy/mm/dd")+"/"+utl.format_url_text(data.title)
+    small.text-muted Blog Post
+    +feedItem(data.title, utl.prettyDate(data.publish_date,"mmmm d, yyyy"), data.summary, _url, "http://www.gravatar.com/avatar/" + md5("code@christophervachon.com") + "?size=48")
+
 block content
     h1 Christopher Vachon's Homepage
-    h2 Coming Soon!
+    h2 Recent Activity
+
+    for item in activityfeed
+        if item.type == "post"
+            .activityItem.article
+                +article(item.data)
+        if item.type == "tweet"
+            .activityItem.tweet
+                +tweet(item.data)
+
+    h2 More Activity From
+    for data in socialMedia
+        .media
+            .media-left
+                a(href=data.url)
+                    img(src=data.imgsrc, alt=data.label).media-object.img-rounded
+            .media-body
+                .media-heading
+                     a(href=data.url).lead!= data.label
+                     p!= data.username
