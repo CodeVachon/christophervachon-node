@@ -10,13 +10,24 @@
     </thead>
     <tfoot>
         <tr>
-            <th colspan="3">
-                <a ng-href="#/articles/new" class="btn btn-success">New</a>
+            <th colspan="4">
+
+                <nav class='pull-right'>
+                    <ul class="pager">
+                        <li ng-class="{disabled: pageNo <= 1}"><a ng-click="pageNo=pageNo-1">Previous</a></li>
+                        <li>{{pageNo}} / {{numberOfPages()}}</li>
+                        <li ng-class="{disabled: pageNo >= numberOfPages()}"><a ng-click="pageNo=pageNo+1">Next</a></li>
+                    </ul>
+                </nav>
+
+                <div class='btn-group'>
+                    <a ng-href="#/articles/new" class="btn btn-success">New</a>
+                </div>
             </th>
         </tr>
     </tfoot>
     <tbody>
-        <tr ng-repeat="article in articles | orderBy : articleOrder : articleOrderDir ">
+        <tr ng-repeat="article in articles | orderBy : articleOrder : articleOrderDir | startFrom:(pageNo-1)*pageSize | limitTo: pageSize">
             <td>{{article.title}}</td>
             <td>{{article.publish_date | date: "longDate" }}</td>
             <td><span class="label label-info" ng-repeat="tag in article.tags">{{tag}}</span></td>

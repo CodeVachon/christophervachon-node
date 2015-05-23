@@ -23,5 +23,15 @@ angular.module('Administrator')
         $scope.isActiveOrder = function( value ) {
             return ($scope.articleOrder == value);
         }
+        $scope.pageNo = 1;
+        $scope.pageSize = 5;
+        $scope.numberOfPages=function(){
+            return Math.ceil($scope.articles.length/$scope.pageSize);                
+        }
     }
-]);
+]).filter('startFrom', function() {
+    return function(input, start) {
+        start = +start; //parse to int
+        return input.slice(start);
+    }
+});
