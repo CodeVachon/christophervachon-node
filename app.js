@@ -18,15 +18,16 @@ var express = require('express'),
 
     Twitter = require('twitter'),
     client = new Twitter({
-        consumer_key: process.env.twitter_consumer_key || "uMdauo5lw43JRap1sRjY4ESBx",
-        consumer_secret: process.env.twitter_consumer_secret || "79p2gvOuhDD6SioiFycLQSyMYQwIDrL8J0YbDPC2Z7jundM8rS",
-        access_token_key: process.env.twitter_access_token_key || "18299192-zBBxEfw1XKXz4JI47kCwnKx2aZ0UA7JwOMgkx1tIt",
-        access_token_secret: process.env.twitter_access_token_secret|| "d21YpMh1kFKmfTjjTYrNaswpJWgyLL0nAcUsoCxSqW9tV",
+        consumer_key: process.env.twitter_consumer_key || "",
+        consumer_secret: process.env.twitter_consumer_secret || "",
+        access_token_key: process.env.twitter_access_token_key || "",
+        access_token_secret: process.env.twitter_access_token_secret|| "",
     }),
     Posts = require("./models/article"),
     md5 = require('MD5'),
     Showdown = require("./public/admin/js/vendor/showdown"),
-    converter = new Showdown.converter({ extensions: ['twitter'] })
+    converter = new Showdown.converter({ extensions: ['twitter'] }),
+    cashedActivity = {}
 ;
 
 if (process.env.testing) {  console.log("APPLICATION IS IN TESTING MODE!!!");  }
@@ -37,7 +38,6 @@ mongoose.connect(MongoURL, function(error) {
         console.log('mongodb connection ['+dbName+'] successful');
     }
 });
-
 
 /*  Set Site Settings  */
 // These are avaliable in views in the `settings` scope
@@ -81,68 +81,24 @@ app.use(function(request, response, next) {
 });
 
 
-
 app.set('view engine', 'jade');
 app.use(express.static(__dirname + '/public'));
 
 app.get('/', function (request, response) {
-
-    var _endDate = new Date();
-    Posts.find({
-        "publish_date": {
-            $lt: _endDate
-        }
-    }, null, {limit: 10, sort: {publish_date: -1}},function (error, posts) {
-        if (error) { console.log(error); }
-        //console.log(posts.length);
-        var params = {screen_name: 'liaodrake', count: 10};
-        client.get('statuses/user_timeline', params, function(error, tweets, t_response){
-            if (error) { console.log(error); }
-            //console.log(tweets.length);
-
-            var RAW_activityfeed = {};
-            for (var i=0,x=posts.length; i<x; i++) {
-                RAW_activityfeed[ +new Date(posts[i].publish_date) ] = { 
-                    type: "post",
-                    data: posts[i]
-                };
+    response.render('index', {
+        activityfeed: cashedActivity,
+        utl:utl,
+        md5:md5,
+        converter:converter,
+        socialMedia: [
+            {
+                label:"Twitter",
+                url: "https://twitter.com/liaodrake",
+                imgsrc: "https://g.twimg.com/dev/documentation/image/Twitter_logo_blue_48.png",
+                username: "liaodrake"
             }
-            for (var i=0,x=tweets.length; i<x; i++) {
-                RAW_activityfeed[ +new Date(tweets[i].created_at) ] = { 
-                    type: "tweet",
-                    data: tweets[i]
-                };
-                //console.log("---");
-                //console.log(tweets[i].entities);
-            }
-            var RAW_activityfeed_timestamps = Object.keys(RAW_activityfeed);
-            RAW_activityfeed_timestamps.sort().reverse();
-
-            //console.log(RAW_activityfeed_timestamps);
-
-            var activityfeed = [];
-            for (var i=0,x=10; i<x; i++) {
-                activityfeed.push(RAW_activityfeed[RAW_activityfeed_timestamps[i]]);
-            }
-
-            //console.log(activityfeed);
-
-            response.render('index', {
-                activityfeed: activityfeed,
-                utl:utl,
-                md5:md5,
-                converter:converter,
-                socialMedia: [
-                    {
-                        label:"Twitter",
-                        url: "https://twitter.com/liaodrake",
-                        imgsrc: "https://g.twimg.com/dev/documentation/image/Twitter_logo_blue_48.png",
-                        username: "liaodrake"
-                    }
-                ]
-            });
-        }); // close client
-    }); // close Posts.find
+        ]
+    });
 }); // close get('/')
 
 // Handel Authentication Tokens
@@ -236,5 +192,45 @@ app.use(function(err, req, res, next){
     }
 
 });
+
+buildActivityFeedCache();
+setInterval(buildActivityFeedCache, 3000);
+
+function buildActivityFeedCache() {
+    cashedActivity = {};
+
+    var _endDate = new Date();
+    Posts.find({"publish_date": {$lt: _endDate }}, null, {limit: 10, sort: {publish_date: -1}},function (error, posts) {
+        if (error) { console.log(error); }
+
+        var params = {screen_name: 'liaodrake', count: 10};
+        client.get('statuses/user_timeline', params, function(error, tweets, t_response){
+            if (error) { console.log(error); }
+
+            var RAW_activityfeed = {};
+            for (var i=0,x=posts.length; i<x; i++) {
+                RAW_activityfeed[ +new Date(posts[i].publish_date) ] = { 
+                    type: "post",
+                    data: posts[i]
+                };
+            }
+            for (var i=0,x=tweets.length; i<x; i++) {
+                RAW_activityfeed[ +new Date(tweets[i].created_at) ] = { 
+                    type: "tweet",
+                    data: tweets[i]
+                };
+            }
+            var RAW_activityfeed_timestamps = Object.keys(RAW_activityfeed);
+            RAW_activityfeed_timestamps.sort().reverse();
+
+            var activityfeed = [];
+            for (var i=0,x=10; i<x; i++) {
+                activityfeed.push(RAW_activityfeed[RAW_activityfeed_timestamps[i]]);
+            }
+
+            cashedActivity = activityfeed;
+        });
+    });
+}
 
 module.exports = app;
