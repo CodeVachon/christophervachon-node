@@ -194,7 +194,7 @@ app.use(function(err, req, res, next){
 });
 
 buildActivityFeedCache();
-setInterval(buildActivityFeedCache, 3000);
+setInterval(buildActivityFeedCache, 30000);
 
 function buildActivityFeedCache() {
     cashedActivity = {};
