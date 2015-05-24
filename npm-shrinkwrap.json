@@ -2,6 +2,23 @@
   "name": "christophervachon-node",
   "version": "0.0.0",
   "dependencies": {
+    "MD5": {
+      "version": "1.2.2",
+      "from": "MD5@",
+      "resolved": "https://registry.npmjs.org/MD5/-/MD5-1.2.2.tgz",
+      "dependencies": {
+        "charenc": {
+          "version": "0.0.1",
+          "from": "charenc@>= 0.0.1",
+          "resolved": "https://registry.npmjs.org/charenc/-/charenc-0.0.1.tgz"
+        },
+        "crypt": {
+          "version": "0.0.1",
+          "from": "crypt@>= 0.0.1",
+          "resolved": "https://registry.npmjs.org/crypt/-/crypt-0.0.1.tgz"
+        }
+      }
+    },
     "bcrypt-nodejs": {
       "version": "0.0.3",
       "from": "bcrypt-nodejs@",
@@ -294,6 +311,34 @@
           "version": "0.0.0",
           "from": "express-unless@0.0.0",
           "resolved": "https://registry.npmjs.org/express-unless/-/express-unless-0.0.0.tgz"
+        }
+      }
+    },
+    "instagram-node": {
+      "version": "0.5.7",
+      "from": "instagram-node@",
+      "resolved": "https://registry.npmjs.org/instagram-node/-/instagram-node-0.5.7.tgz",
+      "dependencies": {
+        "fwk": {
+          "version": "1.0.11",
+          "from": "fwk@1.0.x",
+          "resolved": "https://registry.npmjs.org/fwk/-/fwk-1.0.11.tgz",
+          "dependencies": {
+            "should": {
+              "version": "0.6.3",
+              "from": "should@0.6.x",
+              "resolved": "https://registry.npmjs.org/should/-/should-0.6.3.tgz"
+            },
+            "async": {
+              "version": "0.2.10",
+              "from": "async@0.2.x"
+            }
+          }
+        },
+        "colors": {
+          "version": "0.6.0-1",
+          "from": "colors@0.6.0-1",
+          "resolved": "https://registry.npmjs.org/colors/-/colors-0.6.0-1.tgz"
         }
       }
     },
@@ -1120,6 +1165,18 @@
       "version": "3.0.0",
       "from": "simply-deferred@^3.0.0",
       "resolved": "https://registry.npmjs.org/simply-deferred/-/simply-deferred-3.0.0.tgz"
+    },
+    "twitter": {
+      "version": "1.2.5",
+      "from": "twitter@",
+      "resolved": "https://registry.npmjs.org/twitter/-/twitter-1.2.5.tgz",
+      "dependencies": {
+        "deep-extend": {
+          "version": "0.3.3",
+          "from": "deep-extend@^0.3.2",
+          "resolved": "https://registry.npmjs.org/deep-extend/-/deep-extend-0.3.3.tgz"
+        }
+      }
     }
   }
 }
