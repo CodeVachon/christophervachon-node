@@ -3586,7 +3586,7 @@ article header .meta {
   color: #999;
 }
 article .addthis_sharing_toolbox {
-  margin: 1em;
+  margin: 0 1em 1em 1em;
   width: 40px;
   padding-left: 1em;
   border-left: 1px #999 dashed;
