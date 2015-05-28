@@ -11,12 +11,11 @@
     },
     "cssFiles": ["/includes/css/christophervachon-node.min.css"],
     "jsFiles": [
-        "//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js",
-        "/includes/js/christophervachon-node.min.js"
+        "//ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"
     ],
     "icoFiles": ["/includes/favicon.ico"],
     "googleAnalytics": {
-        "UACode": "---UA-47031068-2",
-        "UADomain": "---christophervachon.com"
+        "UACode": "UA-47031068-2",
+        "UADomain": "christophervachon.com"
     }
 }
