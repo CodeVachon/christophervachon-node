@@ -4,7 +4,10 @@ var express = require('express'),
 
 router.route('/')
     .get(function(request, response) {
-        response.render('about', {});
+        response.render('about', {
+            pageTitle: "About Me",
+            pageDescription: "Who is Christopher Vachon from Midland, Ontario, Canada? Find out here!"
+        });
     }) // close get
 ;
 

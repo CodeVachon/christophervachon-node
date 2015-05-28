@@ -30,7 +30,7 @@ router.route('/')
                     utl: utl,
                     paging: _pagingVariables(count, itemsPerPage, pageNo),
                     pageTitle: "Blog Posts",
-                    pageDescription: "List of all blog posts"
+                    pageDescription: "List of all of the blog posts by Christopher Vachon"
                 });
             }); // close Posts.count
         }); // close Posts.find
@@ -59,7 +59,7 @@ router.route('/tags/:tagname')
                         utl: utl,
                         paging: _pagingVariables(count, itemsPerPage, pageNo),
                         pageTitle: " Blog Posts - Tag: " + request.params.tagname,
-                        pageDescription: "List of all blog posts"
+                        pageDescription: "List of all " + request.params.tagname + " blog posts by Christopher Vachon"
                     });
                 }); // close Posts.count
             } else {
@@ -106,7 +106,7 @@ router.route('/:year')
                             utl: utl,
                             paging: _pagingVariables(count, itemsPerPage, pageNo),
                             pageTitle: "Blog Posts " + _startDate.getFullYear(),
-                            pageDescription: "List of all blog posts for "  + _startDate.getFullYear()
+                            pageDescription: "A list of all of the blog posts in "  + _startDate.getFullYear() + " by Christopher Vachon"
                         });
                     }); // close Posts.count
                 } else {
@@ -162,7 +162,7 @@ router.route('/:year/:month')
                             utl: utl,
                             paging: _pagingVariables(count, itemsPerPage, pageNo),
                             pageTitle: "Blog Posts " + months[_startDate.getMonth()] + " " + _startDate.getFullYear(),
-                            pageDescription: "List of blog posts for " + months[_startDate.getMonth()] + " " + _startDate.getFullYear()
+                            pageDescription: "A list of all of the blog posts in " + months[_startDate.getMonth()] + " " + _startDate.getFullYear() + " by Christopher Vachon"
                         });
                     }); // close Posts.count
                 } else {
@@ -220,7 +220,7 @@ router.route('/:year/:month/:day')
                             utl: utl,
                             paging: _pagingVariables(count, itemsPerPage, pageNo),
                             pageTitle: "Blog Posts " + months[_startDate.getMonth()] + " " + _startDate.getDate() + " "+ _startDate.getFullYear(),
-                            pageDescription: "List of blog posts for " + months[_startDate.getMonth()] + " " + _startDate.getDate() + " "+ _startDate.getFullYear()
+                            pageDescription: "A list of all of the blog posts in " + months[_startDate.getMonth()] + " " + _startDate.getDate() + " "+ _startDate.getFullYear()  + " by Christopher Vachon"
                         });
                     }); // close Posts.count
                     return;
