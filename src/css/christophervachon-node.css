@@ -3585,6 +3585,16 @@ article header .meta {
   font-size: 0.7em;
   color: #999;
 }
+article .addthis_sharing_toolbox {
+  margin: 1em;
+  width: 40px;
+  padding-left: 1em;
+  border-left: 1px #999 dashed;
+  float: right;
+}
+article .article-body {
+  margin-right: 85px;
+}
 article .label {
   margin-right: 0.5em;
 }

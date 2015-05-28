@@ -5,7 +5,8 @@ block content
         header
             h1!= post.title
             p.meta Posted: !{ utl.prettyDate(post.publish_date,"mmmm d, yyyy") }
-        div!= postBody
+        .addthis_sharing_toolbox
+        section.article-body!= postBody
         if post.tags
             aside
                 for tag in post.tags
