@@ -1,6 +1,8 @@
 Christopher Vachon's Node Powered API
 =====================================
 
+[![Join the chat at https://gitter.im/liaodrake/christophervachon-node](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/liaodrake/christophervachon-node?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 ## Scripts
 ### Startup
 There is a simple startup script for Express.
