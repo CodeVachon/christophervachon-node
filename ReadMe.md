@@ -1,5 +1,7 @@
-Christopher Vachon's Node Powered API
-=====================================
+Christopher Vachon's Node Website
+=================================
+
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/liaodrake/christophervachon-node?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)
 
 ## Scripts
 ### Startup
