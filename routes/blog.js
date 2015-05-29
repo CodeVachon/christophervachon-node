@@ -123,14 +123,8 @@ router.route('/:year')
 ;
 router.route('/:year/:month')
     .get(_testDateParams, function(request, response, next) {
-
-        var _startDate = new Date();
-        _startDate.setFullYear(request.params.year);
-        _startDate.setMonth( parseInt(request.params.month)-1 );
-        _startDate.setDate(1);
-        _startDate.setHours(0);
-        _startDate.setMinutes(0);
-        _startDate.setSeconds(0);
+        var monthValue = parseInt(request.params.month)-1;
+        var _startDate = new Date(request.params.year, monthValue, 1, 0, 0, 0);
 
         var _endDate = new Date(_startDate);
         _endDate.setMonth(_endDate.getMonth()+1);
@@ -178,13 +172,8 @@ router.route('/:year/:month')
 ;
 router.route('/:year/:month/:day')
     .get(_testDateParams, function(request, response, next) {
-        var _startDate = new Date();
-        _startDate.setFullYear(request.params.year);
-        _startDate.setMonth( parseInt(request.params.month)-1 );
-        _startDate.setDate( parseInt(request.params.day) );
-        _startDate.setHours(0);
-        _startDate.setMinutes(0);
-        _startDate.setSeconds(0);
+        var monthValue = parseInt(request.params.month)-1;
+        var _startDate = new Date(request.params.year, monthValue, parseInt(request.params.day), 0, 0, 0);
 
         var _endDate = new Date(_startDate);
         _endDate.setDate(_endDate.getDate()+1);
@@ -242,15 +231,8 @@ router.route('/:year/:month/:day')
 ;
 router.route('/:year/:month/:day/:title')
     .get(_testDateParams, function(request, response, next) {
-
-        var _startDate = new Date();
-        _startDate.setFullYear(request.params.year);
-        _startDate.setMonth( parseInt(request.params.month)-1 );
-        _startDate.setDate( parseInt(request.params.day) );
-        _startDate.setHours(0);
-        _startDate.setMinutes(0);
-        _startDate.setSeconds(0);
-
+        var monthValue = parseInt(request.params.month)-1;
+        var _startDate = new Date(request.params.year, monthValue, parseInt(request.params.day), 0, 0, 0);
         var _endDate = new Date(_startDate);
         _endDate.setDate(_endDate.getDate()+1);
 
