@@ -181,7 +181,7 @@ router.route('/:year/:month/:day')
         var _startDate = new Date();
         _startDate.setFullYear(request.params.year);
         _startDate.setMonth( parseInt(request.params.month)-1 );
-        _startDate.setDate(request.params.day);
+        _startDate.setDate( parseInt(request.params.day) );
         _startDate.setHours(0);
         _startDate.setMinutes(0);
         _startDate.setSeconds(0);
@@ -246,7 +246,7 @@ router.route('/:year/:month/:day/:title')
         var _startDate = new Date();
         _startDate.setFullYear(request.params.year);
         _startDate.setMonth( parseInt(request.params.month)-1 );
-        _startDate.setDate(request.params.day);
+        _startDate.setDate( parseInt(request.params.day) );
         _startDate.setHours(0);
         _startDate.setMinutes(0);
         _startDate.setSeconds(0);
