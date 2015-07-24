@@ -9,7 +9,7 @@ mixin feedItem(title, subtitle, body, url, imgsrc)
             .media-heading
                  a(href=url).lead!= title
                  p.sub.text-muted!= subtitle
-            .media-body !{ converter.makeHtml(body).replace(/(https?:\/\/[a-z0-9\/\._-]+[a-z0-9\/])/gi,"<a href='$1'>$1</a>") }
+            .media-body !{ converter.makeHtml(body).replace(/([^'"])(https?:\/\/[a-z0-9\/\._-]+[a-z0-9\/])/gi,"$1<a href='$2'>$2</a>") }
 
 mixin tweet(data)
     small.text-muted Tweet
