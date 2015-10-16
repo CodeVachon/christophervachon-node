@@ -193,8 +193,12 @@ app.use(function(err, req, res, next){
 
 });
 
-buildActivityFeedCache();
-setInterval(buildActivityFeedCache, 30000);
+try {
+  buildActivityFeedCache();
+  setInterval(buildActivityFeedCache, 30000);
+} catch (error) {
+  console.log(error);
+}
 
 function buildActivityFeedCache() {
     cashedActivity = {};
@@ -209,13 +213,13 @@ function buildActivityFeedCache() {
 
             var RAW_activityfeed = {};
             for (var i=0,x=posts.length; i<x; i++) {
-                RAW_activityfeed[ +new Date(posts[i].publish_date) ] = { 
+                RAW_activityfeed[ +new Date(posts[i].publish_date) ] = {
                     type: "post",
                     data: posts[i]
                 };
             }
             for (var i=0,x=tweets.length; i<x; i++) {
-                RAW_activityfeed[ +new Date(tweets[i].created_at) ] = { 
+                RAW_activityfeed[ +new Date(tweets[i].created_at) ] = {
                     type: "tweet",
                     data: tweets[i]
                 };
