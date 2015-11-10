@@ -1,6 +1,6 @@
 {
   "verbose": true,
-  "ignore": ["tests/*.js", "src/*", "public/*", "*.log", ".git/*", "*.jade", "node_modules/*"],
+  "ignore": ["tests/*.js", "src/*", "public/*", "*.log", ".git/*", "*.jade", "node_modules/*", "*.json"],
   "env": {
     "NODE_ENV": "dev"
   }
